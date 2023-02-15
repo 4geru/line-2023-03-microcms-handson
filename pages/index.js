@@ -2,6 +2,7 @@ import Head from 'next/head'
 import Layout, { siteTitle } from '../components/layout'
 import Link from 'next/link'
 import { microcmsClient } from "../lib/microcmsClient";
+import { createRandomUser } from "../lib/createDummyStaff"
 
 export default function Home({ staffs }) {
   return (
@@ -18,6 +19,9 @@ export default function Home({ staffs }) {
           ))}
         </ul>
       </div>
+      <button onClick={() => {
+        const users = createRandomUser();
+      }}>mew</button>
     </Layout>
   )
 }
