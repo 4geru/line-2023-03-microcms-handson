@@ -21,6 +21,21 @@ export default function Home({ _staffs, serviceDomain, apiKey }) {
           {staffs.map((staff) => (
             <li key={staff.id}>
               <Link href={`/blog/${staff.id}`}>{staff.staffName}</Link>
+              <button
+                onClick={() => {
+                  if(!confirm("Do you delete this staff?"))return;
+                  microcmsClient
+                    .delete({
+                      endpoint: 'staffs',
+                      contentId: staff.id,
+                    })
+                    .catch((err) => console.error(err));
+                  const newStaffs = staffs.filter((_staff) => _staff.id != staff.id)
+                  setStaff(newStaffs)
+                }}
+              >
+                delete
+              </button>
             </li>
           ))}
         </ul>
