@@ -1,4 +1,5 @@
 import { faker } from '@faker-js/faker/locale/ja';
+import { microcmsClient } from "../lib/microcmsClient";
 
 interface User {
     staffName: string;
@@ -25,19 +26,27 @@ const addHours = (date, h) => {
   return copiedDate;
 }
 
-export function createRandomUser(): User[] {
-  const users: User[] = [];
-  Array.from({ length: 10 }).forEach(() => {
-    // start from 7, 8, 9 or 10 AM
-    const workingStartAt = new Date(faker.date.past().setHours(getRandomInt(4) + 7, 0, 0));
-    users.push({
-      staffName: `${faker.name.lastName()} ${faker.name.firstName()} `,
-      photo: faker.image.avatar(),
-      workingDayOfWeek: workingDayOfWeek(),
-      workingStartAt: workingStartAt,
-      workingFinishAt: addHours(workingStartAt, 8),
-    });
-  });
+export const createRandomUser = (): User => {
+  // start from 7, 8, 9 or 10 AM
+  const workingStartAt = new Date(faker.date.past().setHours(getRandomInt(4) + 7, 0, 0));
+  const user = {
+    staffName: `${faker.name.lastName()} ${faker.name.firstName()} `,
+    photo: faker.image.avatar(),
+    workingDayOfWeek: workingDayOfWeek(),
+    workingStartAt: workingStartAt,
+    workingFinishAt: addHours(workingStartAt, 8),
+  };
 
-  return users;
+  return user;
+}
+
+export const createUser = (microcmsClient, successCallback, user) => {
+  microcmsClient.create({
+    endpoint: 'staffs',
+    content: user,
+  })
+  .then(successCallback)
+  .catch((err) => console.error(err));
+
+  return user;
 }

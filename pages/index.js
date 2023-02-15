@@ -1,10 +1,16 @@
 import Head from 'next/head'
 import Layout, { siteTitle } from '../components/layout'
 import Link from 'next/link'
-import { microcmsClient } from "../lib/microcmsClient";
-import { createRandomUser } from "../lib/createDummyStaff"
+import { createMicrocmsClient } from "../lib/microcmsClient";
+import { createRandomUser,createUser } from "../lib/createDummyStaff"
+import { useState } from 'react';
 
-export default function Home({ staffs }) {
+export default function Home({ _staffs, serviceDomain, apiKey }) {
+  const [staffs, setStaff] = useState(_staffs)
+  const microcmsClient = createMicrocmsClient({
+    serviceDomain: serviceDomain,
+    apiKey: apiKey
+  })
   return (
     <Layout home>
       <Head>
@@ -20,19 +26,27 @@ export default function Home({ staffs }) {
         </ul>
       </div>
       <button onClick={() => {
-        const users = createRandomUser();
-      }}>mew</button>
+        const user = createRandomUser()
+        createUser(microcmsClient, (res) => {
+          setStaff([...staffs, { id: res.id, ...user }])
+        }, user);
+      }}>create random user</button>
     </Layout>
   )
 }
 
 // データをテンプレートに受け渡す部分の処理を記述します
 export const getStaticProps = async () => {
-  const data = await microcmsClient.get({ endpoint: "staffs" });
+  const data = await createMicrocmsClient({
+    serviceDomain: process.env.SERVICE_DOMAIN,
+    apiKey: process.env.MICROCMS_API_KEY,
+  }).get({ endpoint: "staffs" });
 
   return {
     props: {
-      staffs: data.contents,
+      _staffs: data.contents,
+      serviceDomain: process.env.SERVICE_DOMAIN,
+      apiKey: process.env.MICROCMS_API_KEY,
     },
   };
 };
