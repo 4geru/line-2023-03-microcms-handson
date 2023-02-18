@@ -2,14 +2,13 @@ import Head from 'next/head'
 import Image from 'next/image'
 import Script from 'next/script'
 
-import styles from './layout.module.css'
+import styles from './staffLayout.module.css'
 import utilStyles from '../styles/utils.module.css'
 import Link from 'next/link'
 
 export const siteTitle = 'Next.js Sample Website'
 
 export default function StaffLayout({ children, staff }) {
-  console.log(staff)
   return (
     <div className={styles.container}>
       <Head>

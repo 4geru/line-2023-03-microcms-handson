@@ -20,7 +20,7 @@ export default function Home({ _staffs, serviceDomain, apiKey }) {
         <ul>
           {staffs.map((staff) => (
             <li key={staff.id}>
-              <Link href={`/blog/${staff.id}`}>{staff.staffName}</Link>
+              <Link href={`/staffs/${staff.id}`}>{staff.staffName}</Link>
               <button
                 onClick={() => {
                   if(!confirm("Do you delete this staff?"))return;
