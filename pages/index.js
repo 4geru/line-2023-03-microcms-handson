@@ -62,6 +62,7 @@ export const getStaticProps = async () => {
       _staffs: data.contents,
       serviceDomain: process.env.SERVICE_DOMAIN,
       apiKey: process.env.MICROCMS_API_KEY,
+      liffId: process.env.LIFF_ID
     },
   };
 };

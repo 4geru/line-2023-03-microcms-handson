@@ -2,9 +2,13 @@ import StaffLayout from '../../components/staffLayout'
 import Head from 'next/head'
 import { createMicrocmsClient } from "../../lib/microcmsClient";
 import styles from '../../components/staffLayout.module.css';
+import { LiffContext } from "../_app";
+import { useContext } from 'react'
 
-export default function Staff({ staff }) {
+export default function Staff({ staff, liffId }) {
+  const user = useContext(LiffContext);
   console.log(staff)
+  console.log(user)
   const d = new Date(staff.createdAt)
   var weekJp = ["日", "月", "火", "水", "木", "金", "土"];
   const mew = (hour, weekday, staffId) => {
@@ -74,7 +78,8 @@ export async function getStaticProps({ params }) {
   }).get({ endpoint: `staffs/${params.id}` });
   return {
     props: {
-      staff: data
+      staff: data,
+      liffId: process.env.LIFF_ID
     }
   }
 }
