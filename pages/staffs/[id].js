@@ -4,15 +4,28 @@ import { createMicrocmsClient } from "../../lib/microcmsClient";
 import styles from '../../components/staffLayout.module.css';
 import { LiffContext } from "../_app";
 import { useContext } from 'react'
+import { createReservation } from "../../lib/useReservations";
 
-export default function Staff({ staff, liffId }) {
+export default function Staff({ staff, serviceDomain, microcmsApiKey }) {
+  const client = createMicrocmsClient({
+    serviceDomain: serviceDomain,
+    apiKey: microcmsApiKey,
+  });
   const user = useContext(LiffContext);
   console.log(staff)
   console.log(user)
   const d = new Date(staff.createdAt)
   var weekJp = ["日", "月", "火", "水", "木", "金", "土"];
   const mew = (hour, weekday, staffId) => {
-    console.log([hour, weekday, staffId])
+    createReservation(client, {
+      userName: user.profile.displayName,
+      lineId: user.profile.userId,
+      staffId: staff.id,
+      course: 1,
+      reservationAt: new Date().toISOString(),
+      clientFreeForm: 'client',
+      staffFreeForm: 'staff',
+    })
   }
   return (
     <StaffLayout staff={staff}>
@@ -60,10 +73,11 @@ export default function Staff({ staff, liffId }) {
 }
 
 export async function getStaticPaths() {
-  const data = await createMicrocmsClient({
+  const client = createMicrocmsClient({
     serviceDomain: process.env.SERVICE_DOMAIN,
     apiKey: process.env.MICROCMS_API_KEY,
-  }).get({ endpoint: "staffs" });
+  });
+  const data = await client.get({ endpoint: "staffs" });
   const paths = data.contents.map((e) => ({ params: { id: e.id } }))
   return {
     paths: paths,
@@ -72,14 +86,17 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }) {
-  const data = await createMicrocmsClient({
+  const client = createMicrocmsClient({
     serviceDomain: process.env.SERVICE_DOMAIN,
     apiKey: process.env.MICROCMS_API_KEY,
-  }).get({ endpoint: `staffs/${params.id}` });
+  });
+  const data = await client.get({ endpoint: `staffs/${params.id}` });
   return {
     props: {
       staff: data,
-      liffId: process.env.LIFF_ID
+      liffId: process.env.LIFF_ID,
+      serviceDomain: process.env.SERVICE_DOMAIN,
+      microcmsApiKey: process.env.MICROCMS_API_KEY
     }
   }
 }

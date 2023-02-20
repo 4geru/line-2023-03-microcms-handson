@@ -1,11 +1,11 @@
 import { faker } from '@faker-js/faker/locale/ja';
 
 interface User {
-    staffName: string;
-    photo: string;
-    workingDayOfWeek: Number[];
-    workingStartAt: Date;
-    workingFinishAt: Date;
+  staffName: string;
+  photo: string;
+  workingDayOfWeek: Number[];
+  workingStartAt: Date;
+  workingFinishAt: Date;
 }
 
 const getRandomInt = (max) => {
