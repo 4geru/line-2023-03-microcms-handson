@@ -1,16 +1,29 @@
 import Head from 'next/head'
 import Layout, { siteTitle } from '../components/layout'
 import Link from 'next/link'
+import { LiffContext } from "./_app";
 import { createMicrocmsClient } from "../lib/microcmsClient";
-import { createRandomUser,createUser } from "../lib/createDummyStaff"
-import { useState } from 'react';
+import { createRandomUser, createUser } from "../lib/createDummyStaff"
+import { Reservation, deleteReservation } from "../lib/useReservations"
+import { useState, useContext } from 'react';
 
 export default function Home({ _staffs, serviceDomain, apiKey }) {
+  const user = useContext(LiffContext);
   const [staffs, setStaff] = useState(_staffs)
+  const [reservations, setReservation] = useState([])
   const microcmsClient = createMicrocmsClient({
     serviceDomain: serviceDomain,
     apiKey: apiKey
   })
+
+  // reference: https://document.microcms.io/content-api/get-list-contents#hf768a2fd4d
+  microcmsClient.get({
+    endpoint: "reservations",
+    queries: { limit: 20, filters: `lineId[equals]${user.profile?.userId}` }
+  }).then((data) => {
+    setReservation(data.contents)
+  })
+
   return (
     <Layout home>
       <Head>
@@ -43,23 +56,37 @@ export default function Home({ _staffs, serviceDomain, apiKey }) {
       <button onClick={() => {
         const user = createRandomUser()
         createUser(microcmsClient, (res) => {
-          setStaff([...staffs, { id: res.id, ...user }])
+          setStaff([{ id: res.id, ...user }, ...staffs])
         }, user);
       }}>create random user</button>
+
+      <div>
+        <ul>
+        {reservations.map((reservation) => (
+            <li key={reservation.id}>
+              {reservation.staffId?.staffName}: {reservation.reservationAt}: {reservation.lineId}
+              <button onClick={() => {
+                deleteReservation(microcmsClient, reservation);
+              }}>create random user</button>
+            </li>
+          ))}
+        </ul>
+      </div>
     </Layout>
   )
 }
 
 // データをテンプレートに受け渡す部分の処理を記述します
 export const getStaticProps = async () => {
-  const data = await createMicrocmsClient({
+  const client = createMicrocmsClient({
     serviceDomain: process.env.SERVICE_DOMAIN,
     apiKey: process.env.MICROCMS_API_KEY,
-  }).get({ endpoint: "staffs" });
+  });
+  const staffsData = await client.get({ endpoint: "staffs" });
 
   return {
     props: {
-      _staffs: data.contents,
+      _staffs: staffsData.contents,
       serviceDomain: process.env.SERVICE_DOMAIN,
       apiKey: process.env.MICROCMS_API_KEY,
       liffId: process.env.LIFF_ID
