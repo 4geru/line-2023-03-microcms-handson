@@ -59,6 +59,15 @@ export default function Home({ _staffs, serviceDomain, apiKey }) {
           setStaff([{ id: res.id, ...user }, ...staffs])
         }, user);
       }}>create random user</button>
+      <button onClick={() => {
+        const params = new URLSearchParams({
+          message: 'こんばんわ。Node.js v18 Fetch APIでLINE Notify API を使ってみました。 from api',
+        });
+        fetch("/api/send_notify?" + params.toString())
+        console.log('send message to line')
+      }}>
+        mew
+      </button>
 
       <div>
         <ul>
