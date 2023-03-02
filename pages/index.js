@@ -73,7 +73,9 @@ export default function Home({ _staffs, serviceDomain, apiKey }) {
         <ul>
         {reservations.map((reservation) => (
             <li key={reservation.id}>
-              {reservation.staffId?.staffName}: {reservation.reservationAt}: {reservation.lineId}
+              <Link href={`/reservations/${reservation.id}`}>
+                {reservation.staffId?.staffName}: {reservation.reservationAt}: {reservation.lineId}
+              </Link>
               <button onClick={() => {
                 deleteReservation(microcmsClient, reservation);
               }}>create random user</button>

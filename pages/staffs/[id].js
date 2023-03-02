@@ -12,17 +12,15 @@ export default function Staff({ staff, serviceDomain, microcmsApiKey }) {
     apiKey: microcmsApiKey,
   });
   const user = useContext(LiffContext);
-  console.log(staff)
-  console.log(user)
   const d = new Date(staff.createdAt)
   var weekJp = ["日", "月", "火", "水", "木", "金", "土"];
-  const mew = (hour, weekday, staffId) => {
+  const reserve = (date, staffId) => {
     createReservation(client, {
       userName: user.profile.displayName,
       lineId: user.profile.userId,
-      staffId: staff.id,
+      staffId: staffId,
       course: 1,
-      reservationAt: new Date().toISOString(),
+      reservationAt: date,
       clientFreeForm: 'client',
       staffFreeForm: 'staff',
     })
@@ -58,7 +56,7 @@ export default function Staff({ staff, serviceDomain, microcmsApiKey }) {
                 </div>
                 {[...Array(7)].map((_, weekday) => {
                   return <div key={`week-${weekday}-${hour}`} className={styles.column}>
-                    <button onClick={() => { mew(hour, weekday, staff.id)}}>
+                    <button onClick={() => { reserve(new Date().toISOString(), staff.id)}}>
                       btn
                     </button>
                   </div>

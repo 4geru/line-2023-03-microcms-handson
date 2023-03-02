@@ -9,6 +9,16 @@ export interface Reservation {
   staffFreeForm: string;
 }
 
+export const getReservation = (microcmsClient, reservation: Reservation) => {
+  microcmsClient.create({
+    endpoint: 'reservations',
+    content: reservation,
+  })
+  .catch((err) => console.error(err));
+
+  return reservation;
+}
+
 export const createReservation = (microcmsClient, reservation: Reservation) => {
   microcmsClient.create({
     endpoint: 'reservations',
@@ -23,6 +33,16 @@ export const deleteReservation = (microcmsClient, reservation: Reservation) => {
   microcmsClient.delete({
     endpoint: 'reservations',
     contentId: reservation.id,
+  })
+  .catch((err) => console.error(err));
+
+  return reservation;
+}
+
+export const updateReservation = (microcmsClient, reservation: Reservation) => {
+  microcmsClient.create({
+    endpoint: 'reservations',
+    content: reservation,
   })
   .catch((err) => console.error(err));
 
