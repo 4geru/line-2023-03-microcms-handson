@@ -5,7 +5,7 @@ import styles from '../../components/staffLayout.module.css';
 import { LiffContext } from "../_app";
 import { useContext, useEffect, useState } from 'react'
 import { createReservation, getReservations } from "../../lib/useReservations";
-import { lineNotify } from '../../lib/linenotify';
+import { lineNotify } from '../../lib/lineNotify';
 
 const fetchThisWeeks = () => {
   const today = new Date(); // 今日の日付を取得
@@ -65,8 +65,8 @@ export default function Staff({ staff, serviceDomain, microcmsApiKey }) {
       staff: staffId,
       course: 1,
       reservationAt: date,
-      clientFreeForm: 'client',
-      staffFreeForm: 'staff',
+      clientFreeForm: '',
+      staffFreeForm: `${user.profile.displayName}様 ご予約ありがとうございます。お待ちしております。`,
     }
     createReservation(client, reservation, () => {
       const date = new Date(reservation.reservationAt).toLocaleString()

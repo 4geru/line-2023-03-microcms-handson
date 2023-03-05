@@ -1,5 +1,3 @@
-import { lineNotify } from "./linenotify";
-
 export interface Reservation {
   id: string;
   userName: string;
