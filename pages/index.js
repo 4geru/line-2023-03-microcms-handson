@@ -6,7 +6,6 @@ import { createMicrocmsClient } from "../lib/microcmsClient";
 import { createRandomUser, createUser } from "../lib/createDummyStaff"
 import { deleteReservation } from "../lib/useReservations"
 import { useState, useContext, useEffect } from 'react';
-import { lineNotify } from '../lib/lineNotify'
 
 export default function Home({ _staffs, serviceDomain, apiKey }) {
   const user = useContext(LiffContext);
@@ -71,12 +70,7 @@ export default function Home({ _staffs, serviceDomain, apiKey }) {
                 {reservation.staff?.staffName}: {(new Date(reservation.reservationAt).toLocaleString())}
               </Link>
               <button onClick={() => {
-                deleteReservation(microcmsClient, reservation, () => {
-                  const date = new Date(reservation.reservationAt).toLocaleString()
-                  const staffName = reservation.staff.staffName;
-                  const message = `${staffName}さん：${reservation.userName}様の${date}からの予約削除がされました。`
-                  lineNotify(message)  
-                });
+                deleteReservation(microcmsClient, reservation);
               }}>delete reservation</button>
             </li>
           ))}

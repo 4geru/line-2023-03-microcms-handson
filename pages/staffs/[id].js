@@ -68,10 +68,7 @@ export default function Staff({ staff, serviceDomain, microcmsApiKey }) {
       clientFreeForm: '',
       staffFreeForm: `${user.profile.displayName}様 ご予約ありがとうございます。お待ちしております。`,
     }
-    createReservation(client, reservation, () => {
-      const date = new Date(reservation.reservationAt).toLocaleString()
-      const message = `${staff.staffName}さん：${reservation.userName}様の${date}から予約されました。`
-      lineNotify(message)
+    createReservation(client, reservation, staff, () => {
       setLoad(true)
     })
   }

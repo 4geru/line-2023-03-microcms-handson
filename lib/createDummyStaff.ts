@@ -1,13 +1,13 @@
 import { faker } from '@faker-js/faker/locale/ja';
 import { createDummyWorkday } from './useWorkdays';
 
-interface User {
+export interface Staff {
   staffName: string;
   photo: string;
   workdays: {}[];
 }
 
-export const createRandomUser = (): User => {
+export const createRandomUser = (): Staff => {
   const workdays = createDummyWorkday([]);
   const user = {
     staffName: `${faker.name.lastName()} ${faker.name.firstName()} `,
