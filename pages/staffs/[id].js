@@ -6,12 +6,45 @@ import { LiffContext } from "../_app";
 import { useContext } from 'react'
 import { createReservation } from "../../lib/useReservations";
 
+const fetchThisWeeks = () => {
+  const today = new Date(); // 今日の日付を取得
+  const dates = [];
+  const diff = today.getDay();
+  for(var i = -diff ; i < 7-diff ; i ++) {
+    dates.push(new Date(today.getTime() + (i * 24 * 60 * 60 * 1000)))
+  }
+  return dates;
+}
+
+const isSameDate = (a, b) => {
+  if(a.getFullYear() != b.getFullYear())return false;
+  if(a.getMonth() != b.getMonth())return false;
+  if(a.getDate() != b.getDate())return false;
+  return true;
+}
+
+const isWorkTime = (startTime, targetTime) => {
+  console.log([targetTime, startTime.getHours()])
+  if(targetTime < startTime.getHours())return false;
+  if(startTime.getHours() + 8 < targetTime)return false;
+  return true;
+}
+
+const isIncludeWorkday = (workdays, workday, hour) => {
+  const _isSameDate = workdays.some(v => isSameDate(v, workday))
+  if(!_isSameDate) return false;
+  const d = workdays.filter(v => isSameDate(v, workday))[0]
+  const _isWorkTime = isWorkTime(d, hour)
+  return _isWorkTime
+}
+
 export default function Staff({ staff, serviceDomain, microcmsApiKey }) {
   const client = createMicrocmsClient({
     serviceDomain: serviceDomain,
     apiKey: microcmsApiKey,
   });
   const user = useContext(LiffContext);
+  const dates = fetchThisWeeks();
   var weekJp = ["日", "月", "火", "水", "木", "金", "土"];
   const reserve = (date, staffId) => {
     createReservation(client, {
@@ -24,6 +57,8 @@ export default function Staff({ staff, serviceDomain, microcmsApiKey }) {
       staffFreeForm: 'staff',
     })
   }
+  const workdays = staff.workdays.map((e) => new Date(e.workday))
+
   return (
     <StaffLayout staff={staff}>
       <Head>
@@ -35,25 +70,28 @@ export default function Staff({ staff, serviceDomain, microcmsApiKey }) {
             <div>
               時間
             </div>
-            {[...Array(7)].map((_, weekday) => {
-              return <div key={`week-${weekday}`}>
-                {weekJp[weekday]}
+            {dates.map((workday) => {
+              return <div key={`week-${workday.toISOString()}`}>
+                {workday.getMonth()+1}/{workday.getDate()}({weekJp[workday.getDay()]})
               </div>
-              
             })}
           </div>
-          {[...Array(10)].map((_, hour) => {
+          {[...Array(12)].map((_, hour) => {
             return (
               <div key={`staff-${hour}`} className={styles.row}>
                 <div key={`hour-${hour}`} className={styles.column}>
                   {hour + 8}:00 - {hour + 9}:00
                 </div>
-                {[...Array(7)].map((_, weekday) => {
-                  return <div key={`week-${weekday}-${hour}`} className={styles.column}>
-                    <button onClick={() => { reserve(new Date().toISOString(), staff.id)}}>
-                      btn
-                    </button>
-                  </div>
+                {dates.map((workday) => {
+                  const isWorking = isIncludeWorkday(workdays, workday, hour + 8);
+                  return isWorking ?
+                    <div key={`week-${workday.toISOString()}-${hour}`} className={`${styles.column} ${styles.working}`}>
+                      <button onClick={() => { reserve(new Date().toISOString(), staff.id)}}>
+                        btn
+                      </button>
+                    </div> :
+                    <div key={`week-${workday.toISOString()}-${hour}`} className={`${styles.column} ${styles.notWorking}`}>
+                    </div>
                 })}
               </div>
             );

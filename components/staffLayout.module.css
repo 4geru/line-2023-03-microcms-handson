@@ -1,7 +1,7 @@
 .container {
-  max-width: 36rem;
+  max-width: 50rem;
   padding: 0 1rem;
-  margin: 3rem auto 6rem;
+  margin: 3rem auto;
 }
 
 .header {
@@ -16,7 +16,7 @@
 
 .row {
   display: grid;
-  grid-template-columns: 200px 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px;
+  grid-template-columns: 200px 70px 70px 70px 70px 70px 70px 70px 70px 70px 70px;
 }
 
 .gridContainer {
@@ -27,5 +27,13 @@
 }
 
 .column {
-  height: 50px;
+  height: 70px;
+}
+
+.working {
+  background-color: red;
+}
+
+.notWorking {
+  background-color: gray;
 }
