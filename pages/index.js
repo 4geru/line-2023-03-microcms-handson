@@ -5,7 +5,7 @@ import { LiffContext } from "./_app";
 import { createMicrocmsClient } from "../lib/microcmsClient";
 import { createRandomUser, createUser } from "../lib/createDummyStaff"
 import { deleteReservation, getReservations } from "../lib/useReservations"
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 
 export default function Home({ _staffs, serviceDomain, apiKey }) {
   const user = useContext(LiffContext);
@@ -17,15 +17,17 @@ export default function Home({ _staffs, serviceDomain, apiKey }) {
   })
 
   // reference: https://document.microcms.io/content-api/get-list-contents#hf768a2fd4d
-  microcmsClient.get({
-    endpoint: "reservations",
-    queries: { limit: 20, filters: `lineId[equals]${user.profile?.userId}` }
-  }).then((data) => {
-    setReservation(data.contents)
-  })
+  useEffect(() => {
+    microcmsClient.get({
+      endpoint: "reservations",
+      queries: { limit: 20, filters: `lineId[equals]${user.profile?.userId}` }
+    }).then((data) => {
+      setReservation(data.contents)
+    })  
+  }, [reservations])
 
   return (
-    <Layout home>
+    <Layout home user={user.profile}>
       <Head>
         <title>{siteTitle}</title>
       </Head>
@@ -74,11 +76,11 @@ export default function Home({ _staffs, serviceDomain, apiKey }) {
         {reservations.map((reservation) => (
             <li key={reservation.id}>
               <Link href={`/reservations/${reservation.id}`}>
-                {reservation.staffId?.staffName}: {reservation.reservationAt}: {reservation.lineId}
+                {reservation.staff?.staffName}: {(new Date(reservation.reservationAt).toLocaleString())}
               </Link>
               <button onClick={() => {
                 deleteReservation(microcmsClient, reservation);
-              }}>create random user</button>
+              }}>delete reservation</button>
             </li>
           ))}
         </ul>

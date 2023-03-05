@@ -1,9 +1,7 @@
 import Layout from '../../components/Layout'
-import Head from 'next/head'
 import { createMicrocmsClient } from "../../lib/microcmsClient";
 import styles from '../../components/staffLayout.module.css';
 import { useContext } from 'react'
-import { createReservation } from "../../lib/useReservations";
 import { LiffContext } from "../_app";
 
 export default function Staff({ reservation, serviceDomain, microcmsApiKey }) {
