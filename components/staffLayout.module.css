@@ -31,9 +31,13 @@
 }
 
 .working {
-  background-color: red;
+  background-color: green;
 }
 
 .notWorking {
   background-color: gray;
+}
+
+.reserved {
+  background-color: red;
 }

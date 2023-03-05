@@ -2,21 +2,21 @@ export interface Reservation {
   id: string;
   userName: string;
   lineId: string;
-  staffId: string;
+  staff: any;
   course: number;
   reservationAt: Date;
   clientFreeForm: string;
   staffFreeForm: string;
 }
 
-export const getReservation = (microcmsClient, reservation: Reservation) => {
-  microcmsClient.create({
+export const getReservations = async (microcmsClient, filters: string) => {
+  const res = await microcmsClient.get({
     endpoint: 'reservations',
-    content: reservation,
+    filters: filters
   })
   .catch((err) => console.error(err));
 
-  return reservation;
+  return res.contents;
 }
 
 export const createReservation = (microcmsClient, reservation: Reservation) => {

@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { LiffContext } from "./_app";
 import { createMicrocmsClient } from "../lib/microcmsClient";
 import { createRandomUser, createUser } from "../lib/createDummyStaff"
-import { Reservation, deleteReservation } from "../lib/useReservations"
+import { deleteReservation, getReservations } from "../lib/useReservations"
 import { useState, useContext } from 'react';
 
 export default function Home({ _staffs, serviceDomain, apiKey }) {
