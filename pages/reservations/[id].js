@@ -1,8 +1,9 @@
 import Layout from '../../components/Layout'
 import { createMicrocmsClient } from "../../lib/microcmsClient";
 import styles from '../../components/staffLayout.module.css';
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import { LiffContext } from "../_app";
+import { updateReservation } from '../../lib/useReservations';
 
 export default function Staff({ reservation, serviceDomain, microcmsApiKey }) {
   const client = createMicrocmsClient({
@@ -10,11 +11,23 @@ export default function Staff({ reservation, serviceDomain, microcmsApiKey }) {
     apiKey: microcmsApiKey,
   });
   const user = useContext(LiffContext);
+  const [freeForm, setFreeForm] = useState(reservation.clientFreeForm)
 
-  console.log({reservation})
   return (
     <Layout>
-      mewmew
+      <h3>予約日時</h3><p>{reservation.reservationAt}</p>
+      <h3>ユーザー名</h3><p>{reservation.userName}</p>
+      <h3>担当者</h3><p>{reservation.staff.staffName}</p>
+      <h3>店舗自由記入欄</h3>{reservation.staffFreeForm || '記述なし'}
+      <h3>ユーザー自由記入欄</h3>
+      <textarea onChange={(e) => {setFreeForm(e.target.value)}} defaultValue={reservation.clientFreeForm}>
+      </textarea>
+      <br />
+      <button onClick={() => {
+        updateReservation(client, { id: reservation.id, clientFreeForm: freeForm})
+      }}>
+        ユーザー自由記入欄 の更新
+      </button>
     </Layout>
   )
 }

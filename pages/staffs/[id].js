@@ -5,6 +5,7 @@ import styles from '../../components/staffLayout.module.css';
 import { LiffContext } from "../_app";
 import { useContext, useEffect, useState } from 'react'
 import { createReservation, getReservations } from "../../lib/useReservations";
+import { lineNotify } from '../../lib/linenotify';
 
 const fetchThisWeeks = () => {
   const today = new Date(); // 今日の日付を取得
@@ -67,10 +68,15 @@ export default function Staff({ staff, serviceDomain, microcmsApiKey }) {
       clientFreeForm: 'client',
       staffFreeForm: 'staff',
     }
-    createReservation(client, reservation)
-    alert('予約完了しました')
-    setLoad(true)
+    createReservation(client, reservation, () => {
+      const date = new Date(reservation.reservationAt).toLocaleString()
+      const message = `${staff.staffName}さん：${reservation.userName}様の${date}から予約されました。`
+      lineNotify(message)
+      setLoad(true)
+    })
   }
+  console.log(staff)
+
   const workdays = staff.workdays.map((e) => new Date(e.workday));
   useEffect(() => {
     getReservations(client, `staff[equals]${staff.id}`).then((_reservations) => {

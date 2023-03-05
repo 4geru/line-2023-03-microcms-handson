@@ -4,8 +4,9 @@ import Link from 'next/link'
 import { LiffContext } from "./_app";
 import { createMicrocmsClient } from "../lib/microcmsClient";
 import { createRandomUser, createUser } from "../lib/createDummyStaff"
-import { deleteReservation, getReservations } from "../lib/useReservations"
+import { deleteReservation } from "../lib/useReservations"
 import { useState, useContext, useEffect } from 'react';
+import { lineNotify } from '../lib/lineNotify'
 
 export default function Home({ _staffs, serviceDomain, apiKey }) {
   const user = useContext(LiffContext);
@@ -61,15 +62,6 @@ export default function Home({ _staffs, serviceDomain, apiKey }) {
           setStaff([{ id: res.id, ...user }, ...staffs])
         }, user);
       }}>create random user</button>
-      <button onClick={() => {
-        const params = new URLSearchParams({
-          message: 'こんばんわ。Node.js v18 Fetch APIでLINE Notify API を使ってみました。 from api',
-        });
-        fetch("/api/send_notify?" + params.toString())
-        console.log('send message to line')
-      }}>
-        mew
-      </button>
 
       <div>
         <ul>
@@ -79,7 +71,12 @@ export default function Home({ _staffs, serviceDomain, apiKey }) {
                 {reservation.staff?.staffName}: {(new Date(reservation.reservationAt).toLocaleString())}
               </Link>
               <button onClick={() => {
-                deleteReservation(microcmsClient, reservation);
+                deleteReservation(microcmsClient, reservation, () => {
+                  const date = new Date(reservation.reservationAt).toLocaleString()
+                  const staffName = reservation.staff.staffName;
+                  const message = `${staffName}さん：${reservation.userName}様の${date}からの予約削除がされました。`
+                  lineNotify(message)  
+                });
               }}>delete reservation</button>
             </li>
           ))}
