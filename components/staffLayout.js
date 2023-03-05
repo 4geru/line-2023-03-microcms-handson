@@ -34,40 +34,33 @@ export default function StaffLayout({ children, staff }) {
         }
       />
       <header className={styles.header}>
-        <Link href="/">
-          {
-            staff.photo?.url ?
-            <Image
-              priority
-              src={staff.photo.url}
-              className={utilStyles.borderCircle}
-              height={108}
-              width={108}
-              alt={staff.staffName}
-            /> :
-            <Image
-              priority
-              src="/images/profile.jpg"
-              className={utilStyles.borderCircle}
-              height={108}
-              width={108}
-              alt={staff.staffName}
-            />
-          }
-          
-        </Link>
+        {
+          staff.photo?.url ?
+          <Image
+            priority
+            src={staff.photo.url}
+            className={utilStyles.borderCircle}
+            height={108}
+            width={108}
+            alt={staff.staffName}
+          /> :
+          <Image
+            priority
+            src="/images/profile.jpg"
+            className={utilStyles.borderCircle}
+            height={108}
+            width={108}
+            alt={staff.staffName}
+          />
+        }
         <h2 className={utilStyles.headingLg}>
-          <Link href="/" className={utilStyles.colorInherit}>
-            {staff.staffName}
-          </Link>
+          {staff.staffName}
         </h2>
       </header>
+      <div className={styles.backToHome}>
+        <Link href="/">← Back to home</Link>
+      </div>
       <main>{children}</main>
-      {(
-        <div className={styles.backToHome}>
-          <Link href="/">← Back to home</Link>
-        </div>
-      )}
     </div>
   )
 }

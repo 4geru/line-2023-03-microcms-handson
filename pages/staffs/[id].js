@@ -12,7 +12,6 @@ export default function Staff({ staff, serviceDomain, microcmsApiKey }) {
     apiKey: microcmsApiKey,
   });
   const user = useContext(LiffContext);
-  const d = new Date(staff.createdAt)
   var weekJp = ["日", "月", "火", "水", "木", "金", "土"];
   const reserve = (date, staffId) => {
     createReservation(client, {
@@ -31,11 +30,6 @@ export default function Staff({ staff, serviceDomain, microcmsApiKey }) {
         <title>{staff.staffName}</title>
       </Head>
       <article>
-        <h1>{staff.staffName}</h1>
-        <div>
-          {staff.createdAt} <br />
-          {d.getFullYear()}
-        </div>
         <div className={styles.gridContainer}>
           <div className={styles.row}>
             <div>
