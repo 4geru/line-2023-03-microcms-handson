@@ -1,6 +1,5 @@
-import Layout from '../../components/Layout'
+import Layout from '../../components/layout'
 import { createMicrocmsClient } from "../../lib/microcmsClient";
-import styles from '../../components/staffLayout.module.css';
 import { useContext, useState } from 'react'
 import { LiffContext } from "../_app";
 import { updateReservation } from '../../lib/useReservations';
