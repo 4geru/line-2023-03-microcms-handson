@@ -5,7 +5,7 @@ import styles from '../../components/staffLayout.module.css';
 import { LiffContext } from "../_app";
 import { useContext, useEffect, useState } from 'react'
 import { createReservation, getReservations } from "../../lib/useReservations";
-import { lineNotify } from '../../lib/lineNotify';
+import Link from 'next/link'
 
 const fetchThisWeeks = () => {
   const today = new Date(); // 今日の日付を取得
@@ -113,6 +113,11 @@ export default function Staff({ staff, serviceDomain, microcmsApiKey }) {
                   return isWorking ?
                     reservation ?
                       <div key={`week-${workday.toISOString()}-${hour}`} className={`${styles.column} ${styles.reserved}`}>
+                        {
+                          // workshop: LINE のプロフィールの userId と microCMS で予約している lineId が同じ場合はリンクを表示する
+                          // user.profile?.userId == reservation.lineId &&
+                          //   <Link href={`/reservations/${reservation.id}`}>check</Link>
+                        }
                       </div> :
                       <div key={`week-${workday.toISOString()}-${hour}`} className={`${styles.column} ${styles.working}`}>
                           <button onClick={() => { reserve(_date, staff.id) }}>
