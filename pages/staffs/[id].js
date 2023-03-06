@@ -72,7 +72,6 @@ export default function Staff({ staff, serviceDomain, microcmsApiKey }) {
       setLoad(true)
     })
   }
-  console.log(staff)
 
   const workdays = staff.workdays.map((e) => new Date(e.workday));
   useEffect(() => {

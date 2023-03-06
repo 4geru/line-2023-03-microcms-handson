@@ -32,6 +32,7 @@ export default function Home({ _staffs, serviceDomain, apiKey }) {
         <title>{siteTitle}</title>
       </Head>
       <div>
+        <h2>スタッフ一覧</h2>
         <ul>
           {staffs.map((staff) => (
             <li key={staff.id}>
@@ -63,6 +64,7 @@ export default function Home({ _staffs, serviceDomain, apiKey }) {
       }}>create random user</button>
 
       <div>
+        <h2>予約一覧</h2>
         <ul>
         {reservations.map((reservation) => (
             <li key={reservation.id}>
