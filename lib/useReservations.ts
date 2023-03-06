@@ -1,5 +1,5 @@
 import { lineNotify } from "./linenotify";
-import { Staff } from './createDummyStaff'
+import { Staff } from './useStaff'
 export interface Reservation {
   id: string;
   userName: string;

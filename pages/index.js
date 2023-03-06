@@ -3,7 +3,7 @@ import Layout, { siteTitle } from '../components/layout'
 import Link from 'next/link'
 import { LiffContext } from "./_app";
 import { createMicrocmsClient } from "../lib/microcmsClient";
-import { createRandomUser, createUser } from "../lib/createDummyStaff"
+import { createRandomUser, createUser } from "../lib/useStaff"
 import { deleteReservation } from "../lib/useReservations"
 import { useState, useContext, useEffect } from 'react';
 import { List, ListItem, IconButton, Button } from '@mui/material';
