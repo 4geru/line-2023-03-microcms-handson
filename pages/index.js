@@ -6,11 +6,11 @@ import { createMicrocmsClient } from "../lib/microcmsClient";
 import { createRandomUser, createUser } from "../lib/useStaff"
 import { deleteReservation } from "../lib/useReservations"
 import { useState, useContext, useEffect } from 'react';
-import { List, ListItem, IconButton, Button } from '@mui/material';
+import { List, ListItem, IconButton, Button, Container } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 export default function Home({ _staffs, serviceDomain, apiKey }) {
-  const user = useContext(LiffContext);
+  const { liffObject: liff, profile: profile, setLiffState: setLiffState } = useContext(LiffContext);
   const [staffs, setStaff] = useState(_staffs)
   const [reservations, setReservation] = useState([])
   const microcmsClient = createMicrocmsClient({
@@ -22,18 +22,18 @@ export default function Home({ _staffs, serviceDomain, apiKey }) {
   useEffect(() => {
     microcmsClient.get({
       endpoint: "reservations",
-      queries: { limit: 20, filters: `lineId[equals]${user.profile?.userId}` }
+      queries: { limit: 20, filters: `lineId[equals]${profile?.userId}` }
     }).then((data) => {
       setReservation(data.contents)
     })  
   }, [reservations])
 
   return (
-    <Layout home user={user.profile}>
+    <Layout home user={profile}>
       <Head>
         <title>{siteTitle}</title>
       </Head>
-      <div>
+      <Container sx={{ marginBottom: 5 }}>
         <h2>スタッフ一覧</h2>
         <List>
           {staffs.map((staff) => (
@@ -64,42 +64,64 @@ export default function Home({ _staffs, serviceDomain, apiKey }) {
             </ListItem>
           ))}
         </List>
-      </div>
-      <Button
-        variant="contained"
-        onClick={() => {
-          const user = createRandomUser()
-          createUser(microcmsClient, (res) => {
-            setStaff([{ id: res.id, ...user }, ...staffs])
-          }, user);
-        }}
-      >
-        スタッフの作成
-      </Button>
-      <div>
-        <h2>予約一覧</h2>
-        <List>
-          {reservations.map((reservation) => (
-            <ListItem
-              key={reservation.id}
-              secondaryAction={
-                <IconButton
-                  onClick={() => {
-                    deleteReservation(microcmsClient, reservation);
-                  }}
-                  aria-label=""
-                >
-                  <DeleteIcon />
-                </IconButton>
-              }
-            >
-              <Link href={`/reservations/${reservation.id}`}>
-                {reservation.staff?.staffName}: {(new Date(reservation.reservationAt).toLocaleString())}
-              </Link>
-            </ListItem>
-          ))}
-        </List>
-      </div>
+        <Button
+          variant="contained"
+          onClick={() => {
+            const staff = createRandomUser()
+            createUser(microcmsClient, (res) => {
+              setStaff([{ id: res.id, ...staff }, ...staffs])
+            }, staff);
+          }}
+        >
+          スタッフの作成
+        </Button>
+      </Container>
+
+      <Container>
+        { profile ?
+          <Button
+            variant="contained"
+            color='error'
+            onClick={() => {
+              liff.logout()
+              setLiffState([liff, null])
+            }}
+          >ログアウト</Button> :
+          <Button
+            variant="contained"
+            onClick={() => {
+              liff.login({})
+            }}
+          >ログイン</Button>
+        }
+      </Container>
+
+      { /* ログイン済み */
+        profile && <Container>
+          <h2>予約一覧</h2>
+          <List>
+            {reservations.map((reservation) => (
+              <ListItem
+                key={reservation.id}
+                secondaryAction={
+                  <IconButton
+                    onClick={() => {
+                      deleteReservation(microcmsClient, reservation);
+                    }}
+                    aria-label=""
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                }
+              >
+                <Link href={`/reservations/${reservation.id}`}>
+                  {reservation.staff?.staffName}: {(new Date(reservation.reservationAt).toLocaleString())}
+                </Link>
+              </ListItem>
+            ))}
+          </List>
+        </Container>
+      }
     </Layout>
   )
 }

@@ -12,9 +12,7 @@ export default function App({ Component, pageProps }) {
       liff
         .init({ liffId: pageProps.liffId })
         .then(() => {
-          if (!liff.isLoggedIn()) {
-            liff.login({})
-          } else {
+          if (liff.isLoggedIn()) {
             liff
               .getProfile()
               .then((profile) => {
@@ -23,14 +21,16 @@ export default function App({ Component, pageProps }) {
               .catch((err) => {
                 console.error({ err })
               })
+          } else {
+            setLiffState([liff, null])
           }
         })
         .catch((err) => {
           console.error({ err })
         })
     })
-  }, [])
-  return <LiffContext.Provider value={{liffObject: liffObject, profile: profile}}>
+  }, [profile])
+  return <LiffContext.Provider value={{liffObject: liffObject, profile: profile, setLiffState: setLiffState}}>
     <Component {...pageProps} />
   </LiffContext.Provider>
 }
