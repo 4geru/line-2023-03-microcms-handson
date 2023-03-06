@@ -1,4 +1,5 @@
 import Layout from '../../components/layout'
+import Head from 'next/head'
 import { createMicrocmsClient } from "../../lib/microcmsClient";
 import { useContext, useState } from 'react'
 import { LiffContext } from "../_app";
@@ -18,6 +19,9 @@ export default function Staff({ reservation, serviceDomain, microcmsApiKey }) {
 
   return (
     <Layout>
+      <Head>
+        <title>予約</title>
+      </Head>
       <h3>予約日時</h3><p>{reservation.reservationAt}</p>
       <h3>ユーザー名</h3><p>{reservation.userName}</p>
       <h3>担当者</h3><p>{reservation.staff.staffName}</p>
