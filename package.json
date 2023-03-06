@@ -6,8 +6,12 @@
     "start": "next start"
   },
   "dependencies": {
+    "@emotion/react": "^11.10.6",
+    "@emotion/styled": "^11.10.6",
     "@faker-js/faker": "^7.6.0",
     "@line/liff": "^2.21.4",
+    "@mui/icons-material": "^5.11.11",
+    "@mui/material": "^5.11.11",
     "date-fns": "^2.29.3",
     "gray-matter": "^4.0.3",
     "microcms-js-sdk": "^2.3.2",

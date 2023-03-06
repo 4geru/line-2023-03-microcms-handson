@@ -4,6 +4,8 @@ import { useContext, useState } from 'react'
 import { LiffContext } from "../_app";
 import { updateReservation } from '../../lib/useReservations';
 import { lineNotify } from '../../lib/lineNotify';
+import { TextareaAutosize } from '@mui/base';
+import { Button } from '@mui/material';
 
 export default function Staff({ reservation, serviceDomain, microcmsApiKey }) {
   const client = createMicrocmsClient({
@@ -21,18 +23,26 @@ export default function Staff({ reservation, serviceDomain, microcmsApiKey }) {
       <h3>担当者</h3><p>{reservation.staff.staffName}</p>
       <h3>店舗自由記入欄</h3>{reservation.staffFreeForm || '記述なし'}
       <h3>ユーザー自由記入欄</h3>
-      <textarea onChange={(e) => {setFreeForm(e.target.value)}} defaultValue={reservation.clientFreeForm}>
-      </textarea>
+      <TextareaAutosize
+        onChange={(e) => {setFreeForm(e.target.value)}}
+        defaultValue={reservation.clientFreeForm}
+        placeholder="ユーザー自由記入欄"
+        minRows={5}
+        style={{ width: 400 }}
+      />
       <br />
-      <button onClick={() => {
-        updateReservation(client, { id: reservation.id, clientFreeForm: freeForm}, () => {
-          const date = new Date(reservation.reservationAt).toLocaleString()
-          const message = `${reservation.staff.staffName}さん：${reservation.userName}様の${date}の予約にコメントが来ました\nコメント：「${freeForm}」`
-          lineNotify(message)
-        })
-      }}>
+      <Button
+        variant="contained"
+        onClick={() => {
+          updateReservation(client, { id: reservation.id, clientFreeForm: freeForm}, () => {
+            const date = new Date(reservation.reservationAt).toLocaleString()
+            const message = `${reservation.staff.staffName}さん：${reservation.userName}様の${date}の予約にコメントが来ました\nコメント：「${freeForm}」`
+            lineNotify(message)
+          })
+        }}
+      >
         ユーザー自由記入欄 の更新
-      </button>
+      </Button>
     </Layout>
   )
 }

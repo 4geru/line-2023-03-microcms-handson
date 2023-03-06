@@ -1,11 +1,11 @@
 import StaffLayout from '../../components/staffLayout'
 import Head from 'next/head'
 import { createMicrocmsClient } from "../../lib/microcmsClient";
-import styles from '../../components/staffLayout.module.css';
 import { LiffContext } from "../_app";
 import { useContext, useEffect, useState } from 'react'
 import { createReservation, getReservations } from "../../lib/useReservations";
-import Link from 'next/link'
+import { TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Button } from '@mui/material';
+import { red, grey } from '@mui/material/colors';
 
 const fetchThisWeeks = () => {
   const today = new Date(); // 今日の日付を取得
@@ -87,49 +87,60 @@ export default function Staff({ staff, serviceDomain, microcmsApiKey }) {
         <title>{staff.staffName}</title>
       </Head>
       <article>
-        <div className={styles.gridContainer}>
-          <div className={styles.row}>
-            <div>
-              時間
-            </div>
-            {dates.map((workday) => {
-              return <div key={`week-${workday.toISOString()}`}>
-                {workday.getMonth()+1}/{workday.getDate()}({weekJp[workday.getDay()]})
-              </div>
-            })}
-          </div>
-          {[...Array(12)].map((_, _hour) => {
-            const hour = _hour + 8
-            return (
-              <div key={`staff-${hour}`} className={styles.row}>
-                <div key={`hour-${hour}`} className={styles.column}>
-                  {hour}:00 - {hour + 1}:00
-                </div>
+        <TableContainer sx={{ maxHeight: 500 }}>
+          <Table stickyHeader aria-label="sticky table">
+            <TableHead>
+              <TableRow>
+                <TableCell>
+                  時間
+                </TableCell>
                 {dates.map((workday) => {
-                  const _date = new Date(workday.getFullYear(), workday.getMonth(), workday.getDate(), hour);
-                  const isWorking = isIncludeWorkday(workdays, workday, hour);
-                  const reservation = getReservation(reservations, workday, hour);
-                  return isWorking ?
-                    reservation ?
-                      <div key={`week-${workday.toISOString()}-${hour}`} className={`${styles.column} ${styles.reserved}`}>
-                        {
-                          // workshop: LINE のプロフィールの userId と microCMS で予約している lineId が同じ場合はリンクを表示する
-                          // user.profile?.userId == reservation.lineId &&
-                          //   <Link href={`/reservations/${reservation.id}`}>check</Link>
-                        }
-                      </div> :
-                      <div key={`week-${workday.toISOString()}-${hour}`} className={`${styles.column} ${styles.working}`}>
-                          <button onClick={() => { reserve(_date, staff.id) }}>
-                            btn
-                          </button>
-                      </div> :
-                    <div key={`week-${workday.toISOString()}-${hour}`} className={`${styles.column} ${styles.notWorking}`}>
-                    </div>
+                  return <TableCell key={`week-${workday.toISOString()}`}>
+                    {workday.getMonth()+1}/{workday.getDate()}({weekJp[workday.getDay()]})
+                  </TableCell>
                 })}
-              </div>
-            );
-          })}
-        </div>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {[...Array(12)].map((_, _hour) => {
+                const hour = _hour + 8
+                return (
+                  <TableRow key={`staff-${hour}`}>
+                    <TableCell key={`hour-${hour}`}>
+                      {hour}:00 - {hour + 1}:00
+                    </TableCell>
+                    {dates.map((workday) => {
+                      const _date = new Date(workday.getFullYear(), workday.getMonth(), workday.getDate(), hour);
+                      const isWorking = isIncludeWorkday(workdays, workday, hour);
+                      const reservation = getReservation(reservations, workday, hour);
+                      return isWorking ?
+                        reservation ?
+                          <TableCell key={`week-${workday.toISOString()}-${hour}`} sx={{ bgcolor: red[500], color: grey[50] }} align='center' >
+                            {/* {
+                              // workshop: LINE のプロフィールの userId と microCMS で予約している lineId が同じ場合はリンクを表示する
+                              user.profile?.userId == reservation.lineId ?
+                                <Button href={`/reservations/${reservation.id}`}>予約確認</Button> :
+                                '予約済み'
+                            } */}
+                            予約済み
+                          </TableCell> :
+                          <TableCell key={`week-${workday.toISOString()}-${hour}`} align='center'>
+                              <Button
+                                variant="text"
+                                onClick={() => { reserve(_date, staff.id) }}
+                              >
+                                予約
+                              </Button>
+                          </TableCell> :
+                        <TableCell key={`week-${workday.toISOString()}-${hour}`} sx={{ bgcolor: grey[500] }}>
+                        </TableCell>
+                    })}
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </TableContainer>
       </article>
     </StaffLayout>
   )

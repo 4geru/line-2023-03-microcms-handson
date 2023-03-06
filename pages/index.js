@@ -6,6 +6,8 @@ import { createMicrocmsClient } from "../lib/microcmsClient";
 import { createRandomUser, createUser } from "../lib/createDummyStaff"
 import { deleteReservation } from "../lib/useReservations"
 import { useState, useContext, useEffect } from 'react';
+import { List, ListItem, IconButton, Button } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 export default function Home({ _staffs, serviceDomain, apiKey }) {
   const user = useContext(LiffContext);
@@ -33,50 +35,70 @@ export default function Home({ _staffs, serviceDomain, apiKey }) {
       </Head>
       <div>
         <h2>スタッフ一覧</h2>
-        <ul>
+        <List>
           {staffs.map((staff) => (
-            <li key={staff.id}>
+            <ListItem
+              key={staff.id}
+              secondaryAction={
+                <IconButton
+                  onClick={() => {
+                    if(!confirm("Do you delete this staff?"))return;
+                    microcmsClient
+                      .delete({
+                        endpoint: 'staffs',
+                        contentId: staff.id,
+                      })
+                      .then(() => {
+                        const newStaffs = staffs.filter((_staff) => _staff.id != staff.id)
+                        setStaff(newStaffs)
+                      })
+                      .catch((err) => console.error(err));
+                  }}
+                  aria-label=""
+                >
+                  <DeleteIcon />
+                </IconButton>
+              }
+            >
               <Link href={`/staffs/${staff.id}`}>{staff.staffName}</Link>
-              <button
-                onClick={() => {
-                  if(!confirm("Do you delete this staff?"))return;
-                  microcmsClient
-                    .delete({
-                      endpoint: 'staffs',
-                      contentId: staff.id,
-                    })
-                    .catch((err) => console.error(err));
-                  const newStaffs = staffs.filter((_staff) => _staff.id != staff.id)
-                  setStaff(newStaffs)
-                }}
-              >
-                delete
-              </button>
-            </li>
+            </ListItem>
           ))}
-        </ul>
+        </List>
       </div>
-      <button onClick={() => {
-        const user = createRandomUser()
-        createUser(microcmsClient, (res) => {
-          setStaff([{ id: res.id, ...user }, ...staffs])
-        }, user);
-      }}>create random user</button>
-
+      <Button
+        variant="contained"
+        onClick={() => {
+          const user = createRandomUser()
+          createUser(microcmsClient, (res) => {
+            setStaff([{ id: res.id, ...user }, ...staffs])
+          }, user);
+        }}
+      >
+        スタッフの作成
+      </Button>
       <div>
         <h2>予約一覧</h2>
-        <ul>
-        {reservations.map((reservation) => (
-            <li key={reservation.id}>
+        <List>
+          {reservations.map((reservation) => (
+            <ListItem
+              key={reservation.id}
+              secondaryAction={
+                <IconButton
+                  onClick={() => {
+                    deleteReservation(microcmsClient, reservation);
+                  }}
+                  aria-label=""
+                >
+                  <DeleteIcon />
+                </IconButton>
+              }
+            >
               <Link href={`/reservations/${reservation.id}`}>
                 {reservation.staff?.staffName}: {(new Date(reservation.reservationAt).toLocaleString())}
               </Link>
-              <button onClick={() => {
-                deleteReservation(microcmsClient, reservation);
-              }}>delete reservation</button>
-            </li>
+            </ListItem>
           ))}
-        </ul>
+        </List>
       </div>
     </Layout>
   )

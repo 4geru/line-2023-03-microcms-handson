@@ -4,7 +4,7 @@ import Script from 'next/script'
 
 import styles from './layout.module.css'
 import utilStyles from '../styles/utils.module.css'
-import Link from 'next/link'
+import { Link } from '@mui/material';
 
 export const siteTitle = 'Next.js Sample Website'
 

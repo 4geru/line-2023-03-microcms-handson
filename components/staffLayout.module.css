@@ -14,30 +14,9 @@
   margin: 3rem 0 0;
 }
 
-.row {
-  display: grid;
-  grid-template-columns: 200px 70px 70px 70px 70px 70px 70px 70px 70px 70px 70px;
-}
-
 .gridContainer {
   /* グリッドコンテナ */
   display: grid;
   column-gap: 10px;
   row-gap: 10px;
-}
-
-.column {
-  height: 70px;
-}
-
-.working {
-  background-color: green;
-}
-
-.notWorking {
-  background-color: gray;
-}
-
-.reserved {
-  background-color: red;
 }
