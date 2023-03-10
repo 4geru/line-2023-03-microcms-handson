@@ -19,14 +19,14 @@ export default function App({ Component, pageProps }) {
                 setLiffState([liff, profile])
               })
               .catch((err) => {
-                console.error({ err })
+                console.warn({ err })
               })
           } else {
             setLiffState([liff, null])
           }
         })
         .catch((err) => {
-          console.error({ err })
+          console.warn({ err })
         })
     })
   }, [profile])
