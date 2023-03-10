@@ -1,4 +1,4 @@
-import { lineNotify } from "./linenotify";
+import { lineNotify } from "./lineNotify";
 import { Staff } from './useStaff'
 export interface Reservation {
   id: string;
