@@ -6,6 +6,7 @@ import { useContext, useEffect, useState } from 'react'
 import { createReservation, getReservations } from "../../lib/useReservations";
 import { TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Button } from '@mui/material';
 import { red, grey } from '@mui/material/colors';
+import { lineNotify } from "../../lib/lineNotify";
 
 const fetchThisWeeks = () => {
   const today = new Date(); // 今日の日付を取得
@@ -69,6 +70,10 @@ export default function Staff({ staff, serviceDomain, microcmsApiKey }) {
       staffFreeForm: `${user.profile.displayName}様 ご予約ありがとうございます。お待ちしております。`,
     }
     createReservation(client, reservation, staff, () => {
+      const date = new Date(reservation.reservationAt).toLocaleString()
+      const message = `${staff.staffName}さん：${reservation.userName}様の${date}から予約されました。`
+      lineNotify(message)
+
       setLoad(true)
     })
   }

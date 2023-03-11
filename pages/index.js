@@ -8,6 +8,7 @@ import { deleteReservation } from "../lib/useReservations"
 import { useState, useContext, useEffect } from 'react';
 import { List, ListItem, IconButton, Button, Container } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { lineNotify } from "../lib/lineNotify";
 
 export default function Home({ _staffs, serviceDomain, apiKey }) {
   const { liffObject: liff, profile: profile, setLiffState: setLiffState } = useContext(LiffContext);
@@ -106,7 +107,12 @@ export default function Home({ _staffs, serviceDomain, apiKey }) {
                 secondaryAction={
                   <IconButton
                     onClick={() => {
-                      deleteReservation(microcmsClient, reservation);
+                      deleteReservation(microcmsClient, reservation, () => {
+                        const date = new Date(reservation.reservationAt).toLocaleString()
+                        const staffName = reservation.staff.staffName;
+                        const message = `${staffName}さん：${reservation.userName}様の${date}からの予約削除がされました。`
+                        lineNotify(message);
+                      });
                     }}
                     aria-label=""
                   >

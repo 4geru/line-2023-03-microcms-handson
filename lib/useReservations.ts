@@ -1,4 +1,3 @@
-import { lineNotify } from "./lineNotify";
 import { Staff } from './useStaff'
 export interface Reservation {
   id: string;
@@ -29,10 +28,6 @@ export const createReservation = (microcmsClient, reservation: Reservation, staf
     content: reservation,
   })
   .then(() => {
-    const date = new Date(reservation.reservationAt).toLocaleString()
-    const message = `${staff.staffName}さん：${reservation.userName}様の${date}から予約されました。`
-    lineNotify(message)
-
     success()
   })
   .catch((err) => console.error(err));
@@ -47,10 +42,6 @@ export const deleteReservation = (microcmsClient, reservation: Reservation, succ
     contentId: reservation.id,
   })
   .then(() => {
-    const date = new Date(reservation.reservationAt).toLocaleString()
-    const staffName = reservation.staff.staffName;
-    const message = `${staffName}さん：${reservation.userName}様の${date}からの予約削除がされました。`
-    lineNotify(message);
     success()
   })
   .catch((err) => console.error(err));
