@@ -13,14 +13,7 @@ export default function App({ Component, pageProps }) {
         .init({ liffId: pageProps.liffId })
         .then(() => {
           if (liff.isLoggedIn()) {
-            liff
-              .getProfile()
-              .then((profile) => {
-                setLiffState([liff, profile])
-              })
-              .catch((err) => {
-                console.warn({ err })
-              })
+            // プロフィール情報の取得をする
           } else {
             setLiffState([liff, null])
           }
