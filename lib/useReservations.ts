@@ -16,13 +16,13 @@ export const getReservations = async (microcmsClient, filters: string, success: 
 }
 
 export const createReservation = (microcmsClient, reservation: Reservation, staff: Staff, success = () => {}) => {
-  if(!confirm("Do you reserve time?"))return;
+  if(!confirm("予約しますか？"))return;
   // 「予約作成」のコードを追加する
   return reservation;
 }
 
 export const deleteReservation = (microcmsClient, reservation: Reservation, success: () => {}) => {
-  if(!confirm("Do you delete this reservation?"))return;
+  if(!confirm("予約を解除しますか？"))return;
   // 「予約削除」のコードを追加する
   return reservation;
 }
