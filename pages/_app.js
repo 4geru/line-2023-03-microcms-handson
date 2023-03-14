@@ -1,7 +1,7 @@
 import '../styles/global.css'
 import { useEffect, useState, createContext } from 'react'
 
-export const LiffContext = createContext([null, null]);
+export const LiffContext = createContext({});
 
 export default function App({ Component, pageProps }) {
   // [liffObject, profile]

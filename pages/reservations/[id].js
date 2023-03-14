@@ -13,7 +13,7 @@ export default function Staff({ reservation, serviceDomain, microcmsApiKey }) {
     serviceDomain: serviceDomain,
     apiKey: microcmsApiKey,
   });
-  const user = useContext(LiffContext);
+  const { profile } = useContext(LiffContext);
   const [freeForm, setFreeForm] = useState(reservation.clientFreeForm)
   // Workshop: もし違うユーザーだったらリダイレクトする
 

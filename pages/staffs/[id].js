@@ -54,20 +54,20 @@ export default function Staff({ staff, serviceDomain, microcmsApiKey }) {
     serviceDomain: serviceDomain,
     apiKey: microcmsApiKey,
   });
-  const user = useContext(LiffContext);
+  const { profile } = useContext(LiffContext);
   const dates = fetchThisWeeks();
   const [load, setLoad] = useState(false);
   const [reservations, setReservations] = useState([]);
   var weekJp = ["日", "月", "火", "水", "木", "金", "土"];
   const reserve = (date, staffId) => {
     const reservation = {
-      userName: user.profile.displayName,
-      lineId: user.profile.userId,
+      userName: profile.displayName,
+      lineId: profile.userId,
       staff: staffId,
       course: 1,
       reservationAt: date,
       clientFreeForm: '',
-      staffFreeForm: `${user.profile.displayName}様 ご予約ありがとうございます。お待ちしております。`,
+      staffFreeForm: `${profile.displayName}様 ご予約ありがとうございます。お待ちしております。`,
     }
     createReservation(client, reservation, staff, () => {
       const date = new Date(reservation.reservationAt).toLocaleString()
@@ -123,7 +123,7 @@ export default function Staff({ staff, serviceDomain, microcmsApiKey }) {
                           <TableCell key={`week-${workday.toISOString()}-${hour}`} sx={{ bgcolor: red[500], color: grey[50] }} align='center' >
                             {/* {
                               // workshop: LINE のプロフィールの userId と microCMS で予約している lineId が同じ場合はリンクを表示する
-                              user.profile?.userId == reservation.lineId ?
+                              profile?.userId == reservation.lineId ?
                                 <Button href={`/reservations/${reservation.id}`}>予約確認</Button> :
                                 '予約済み'
                             } */}
