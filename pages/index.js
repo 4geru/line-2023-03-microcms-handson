@@ -11,7 +11,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { lineNotify } from "../lib/lineNotify";
 
 export default function Home({ _staffs, serviceDomain, apiKey }) {
-  const { liffObject: liff, profile: profile, setLiffState: setLiffState } = useContext(LiffContext);
+  const { liffObject: liff, profile, setLiffState } = useContext(LiffContext);
   const [staffs, setStaff] = useState(_staffs)
   const [reservations, setReservation] = useState([])
   const microcmsClient = createMicrocmsClient({
