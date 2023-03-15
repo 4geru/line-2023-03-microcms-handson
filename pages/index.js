@@ -26,8 +26,8 @@ export default function Home({ _staffs, serviceDomain, apiKey }) {
       queries: { limit: 20, filters: `lineId[equals]${profile?.userId}` }
     }).then((data) => {
       setReservation(data.contents)
-    })  
-  }, [reservations])
+    })
+  }, [])
 
   return (
     <Layout home user={profile}>
