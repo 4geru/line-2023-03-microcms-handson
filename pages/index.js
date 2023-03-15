@@ -13,6 +13,7 @@ import { lineNotify } from "../lib/lineNotify";
 export default function Home({ _staffs, serviceDomain, apiKey }) {
   const { liffObject: liff, profile, setLiffState } = useContext(LiffContext);
   const [staffs, setStaff] = useState(_staffs)
+  const [load, setLoad] = useState(true)
   const [reservations, setReservation] = useState([])
   const microcmsClient = createMicrocmsClient({
     serviceDomain: serviceDomain,
@@ -21,13 +22,14 @@ export default function Home({ _staffs, serviceDomain, apiKey }) {
 
   // reference: https://document.microcms.io/content-api/get-list-contents#hf768a2fd4d
   useEffect(() => {
+    if(!load)return
     microcmsClient.get({
       endpoint: "reservations",
       queries: { limit: 20, filters: `lineId[equals]${profile?.userId}` }
     }).then((data) => {
       setReservation(data.contents)
     })  
-  }, [reservations])
+  }, [profile, load])
 
   return (
     <Layout home user={profile}>
@@ -112,6 +114,7 @@ export default function Home({ _staffs, serviceDomain, apiKey }) {
                         const staffName = reservation.staff.staffName;
                         const message = `${staffName}さん：${reservation.userName}様の${date}からの予約削除がされました。`
                         lineNotify(message);
+                        setLoad(true);
                       });
                     }}
                     aria-label=""

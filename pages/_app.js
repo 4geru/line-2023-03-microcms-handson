@@ -22,7 +22,7 @@ export default function App({ Component, pageProps }) {
           console.warn({ err })
         })
     })
-  }, [profile])
+  }, [])
   return <LiffContext.Provider value={{liffObject: liffObject, profile: profile, setLiffState: setLiffState}}>
     <Component {...pageProps} />
   </LiffContext.Provider>
