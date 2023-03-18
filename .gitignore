@@ -26,3 +26,5 @@ yarn-error.log*
 
 # seacret variables
 .env.development
+
+.history/**
