@@ -6,7 +6,7 @@ import { LiffContext } from "../_app";
 import { updateReservation } from '../../lib/useReservations';
 import { lineNotify } from '../../lib/lineNotify';
 import { TextareaAutosize } from '@mui/base';
-import { Button } from '@mui/material';
+import { Button, Snackbar, Alert } from '@mui/material';
 
 export default function Staff({ reservation, serviceDomain, microcmsApiKey }) {
   const client = createMicrocmsClient({
@@ -15,6 +15,7 @@ export default function Staff({ reservation, serviceDomain, microcmsApiKey }) {
   });
   const { profile } = useContext(LiffContext);
   const [freeForm, setFreeForm] = useState(reservation.clientFreeForm)
+  const [snackMessage, setSnackMessage] = useState(undefined)
   // Workshop: もし違うユーザーだったらリダイレクトする
 
   return (
@@ -41,12 +42,27 @@ export default function Staff({ reservation, serviceDomain, microcmsApiKey }) {
           updateReservation(client, { id: reservation.id, clientFreeForm: freeForm}, () => {
             const date = new Date(reservation.reservationAt).toLocaleString()
             const message = `${reservation.staff.staffName}さん：${reservation.userName}様の${date}の予約にコメントが来ました\nコメント：「${freeForm}」`
+            const userMessage = `${date}の予約にコメントをしました<br/>コメント：<br/>${freeForm}`
             lineNotify(message)
+            setSnackMessage(userMessage.replaceAll('\n', '<br />'))
           })
         }}
       >
         ユーザー自由記入欄 の更新
       </Button>
+      {
+        <Snackbar
+          open={!!snackMessage}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right',
+          }}
+        >
+          <Alert onClose={()=>{setSnackMessage(undefined)}} severity="success">
+            <div dangerouslySetInnerHTML={{ __html: snackMessage }}></div>
+          </Alert>
+        </Snackbar>
+      }
     </Layout>
   )
 }

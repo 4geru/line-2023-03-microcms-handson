@@ -58,6 +58,7 @@ export default function Staff({ staff, serviceDomain, microcmsApiKey }) {
   const dates = fetchThisWeeks();
   const [load, setLoad] = useState(false);
   const [reservations, setReservations] = useState([]);
+  const [snackMessage, setSnackMessage] = useState(undefined);
   var weekJp = ["日", "月", "火", "水", "木", "金", "土"];
   const reserve = (date, staffId) => {
     const reservation = {
@@ -72,8 +73,9 @@ export default function Staff({ staff, serviceDomain, microcmsApiKey }) {
     createReservation(client, reservation, staff, () => {
       const date = new Date(reservation.reservationAt).toLocaleString()
       const message = `${staff.staffName}さん：${reservation.userName}様の${date}から予約されました。`
+      const userMessage = `${date}の予約をしました`
       lineNotify(message)
-
+      setSnackMessage(userMessage)
       setLoad(true)
     })
   }
@@ -146,6 +148,19 @@ export default function Staff({ staff, serviceDomain, microcmsApiKey }) {
             </TableBody>
           </Table>
         </TableContainer>
+        {
+          <Snackbar
+            open={!!snackMessage}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'right',
+            }}
+          >
+            <Alert onClose={()=>{setSnackMessage(undefined)}} severity="success">
+              {snackMessage}
+            </Alert>
+          </Snackbar>
+        }
       </article>
     </StaffLayout>
   )

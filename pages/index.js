@@ -6,7 +6,7 @@ import { createMicrocmsClient } from "../lib/microcmsClient";
 import { createRandomUser, createUser } from "../lib/useStaff"
 import { deleteReservation } from "../lib/useReservations"
 import { useState, useContext, useEffect } from 'react';
-import { List, ListItem, IconButton, Button, Container } from '@mui/material';
+import { List, ListItem, IconButton, Button, Container, Snackbar, Alert } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { lineNotify } from "../lib/lineNotify";
 
@@ -15,6 +15,7 @@ export default function Home({ _staffs, serviceDomain, apiKey }) {
   const [staffs, setStaff] = useState(_staffs)
   const [load, setLoad] = useState(true)
   const [reservations, setReservation] = useState([])
+  const [snackMessage, setSnackMessage] = useState(undefined)
   const microcmsClient = createMicrocmsClient({
     serviceDomain: serviceDomain,
     apiKey: apiKey
@@ -54,6 +55,7 @@ export default function Home({ _staffs, serviceDomain, apiKey }) {
                       .then(() => {
                         const newStaffs = staffs.filter((_staff) => _staff.id != staff.id)
                         setStaff(newStaffs)
+                        setSnackMessage(`${staff.staffName}を削除しました`)
                       })
                       .catch((err) => console.error(err));
                   }}
@@ -70,10 +72,11 @@ export default function Home({ _staffs, serviceDomain, apiKey }) {
         <Button
           variant="contained"
           onClick={() => {
-            const staff = createRandomUser()
-            createUser(microcmsClient, (res) => {
+            const staff = createRandomStaff()
+            createStaff(microcmsClient, (res) => {
               setStaff([{ id: res.id, ...staff }, ...staffs])
             }, staff);
+            setSnackMessage(`${staff.staffName}を追加しました`)
           }}
         >
           スタッフの作成
@@ -113,7 +116,9 @@ export default function Home({ _staffs, serviceDomain, apiKey }) {
                         const date = new Date(reservation.reservationAt).toLocaleString()
                         const staffName = reservation.staff.staffName;
                         const message = `${staffName}さん：${reservation.userName}様の${date}からの予約削除がされました。`
+                        const userMessage = `${date}からの予約削除がされました。`
                         lineNotify(message);
+                        setSnackMessage(userMessage);
                         setLoad(true);
                       });
                     }}
@@ -130,6 +135,20 @@ export default function Home({ _staffs, serviceDomain, apiKey }) {
             ))}
           </List>
         </Container>
+      }
+
+      {
+        <Snackbar
+          open={!!snackMessage}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right',
+          }}
+        >
+          <Alert onClose={()=>{setSnackMessage(undefined)}} severity="success">
+            {snackMessage}
+          </Alert>
+        </Snackbar>
       }
     </Layout>
   )
