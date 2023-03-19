@@ -7,24 +7,30 @@ export interface Staff {
   workdays: {}[];
 }
 
-export const createRandomUser = (): Staff => {
+export const createRandomStaff = (): Staff => {
   const workdays = createDummyWorkday([]);
-  const user = {
+  const staff = {
     staffName: `${faker.name.lastName()} ${faker.name.firstName()} `,
     photo: faker.image.avatar(),
     workdays: workdays
   };
 
-  return user;
+  return staff;
 }
 
-export const createUser = (microcmsClient, successCallback, user) => {
+export const createStaff = (microcmsClient, successCallback, staff) => {
   microcmsClient.create({
     endpoint: 'staffs',
-    content: user,
+    content: staff,
   })
   .then(successCallback)
   .catch((err) => console.error(err));
 
-  return user;
+  return staff;
+}
+
+// workshop: deleteStaff を追加しましょう
+export const deleteUser = (microcmsClient, successCallback, staff) => {
+  // TODO: 書く
+  return staff;
 }

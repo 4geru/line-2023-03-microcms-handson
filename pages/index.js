@@ -3,7 +3,7 @@ import Layout, { siteTitle } from '../components/layout'
 import Link from 'next/link'
 import { LiffContext } from "./_app";
 import { createMicrocmsClient } from "../lib/microcmsClient";
-import { createRandomUser, createUser } from "../lib/useStaff"
+import { createRandomStaff, createStaff } from "../lib/useStaff"
 import { deleteReservation } from "../lib/useReservations"
 import { useState, useContext, useEffect } from 'react';
 import { List, ListItem, IconButton, Button, Container, Snackbar, Alert } from '@mui/material';
@@ -46,7 +46,8 @@ export default function Home({ _staffs, serviceDomain, apiKey }) {
               secondaryAction={
                 <IconButton
                   onClick={() => {
-                    if(!confirm("Do you delete this staff?"))return;
+                    // workshop: deleteStaff を追加しましょう
+                    if(!confirm("スタッフを削除しますか？"))return;
                     microcmsClient
                       .delete({
                         endpoint: 'staffs',
