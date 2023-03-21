@@ -10,6 +10,11 @@ import { Button, Snackbar, Alert } from '@mui/material';
 import { useRouter } from 'next/router'
 
 export default function Staff({ serviceDomain, microcmsApiKey }) {
+  const { profile } = useContext(LiffContext);
+  const [reservation, setReservation] = useState(undefined);
+  const [freeForm, setFreeForm] = useState(undefined)
+  const [snackMessage, setSnackMessage] = useState(undefined)
+
   const client = createMicrocmsClient({
     serviceDomain: serviceDomain,
     apiKey: microcmsApiKey,
@@ -25,10 +30,6 @@ export default function Staff({ serviceDomain, microcmsApiKey }) {
       setReservation(content)
     })
   }, [router])
-  const [reservation, setReservation] = useState(undefined);
-  const [freeForm, setFreeForm] = useState(reservation?.clientFreeForm)
-  const [snackMessage, setSnackMessage] = useState(undefined)
-  const { profile } = useContext(LiffContext);
   // Workshop: もし違うユーザーだったらリダイレクトする
 
   if(!reservation) {

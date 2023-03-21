@@ -12,15 +12,16 @@ import { lineNotify } from "../lib/lineNotify";
 
 export default function Home({ _staffs, serviceDomain, apiKey }) {
   const { liffObject: liff, profile, setLiffState } = useContext(LiffContext);
+
   const [staffs, setStaff] = useState(_staffs)
   const [load, setLoad] = useState(true)
   const [reservations, setReservation] = useState([])
   const [snackMessage, setSnackMessage] = useState(undefined)
+
   const microcmsClient = createMicrocmsClient({
     serviceDomain: serviceDomain,
     apiKey: apiKey
   })
-
   // reference: https://document.microcms.io/content-api/get-list-contents#hf768a2fd4d
   useEffect(() => {
     if(!load)return

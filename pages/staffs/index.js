@@ -7,29 +7,21 @@ import { createReservation, getReservations } from "../../lib/useReservations";
 import { TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Button, Snackbar, Alert } from '@mui/material';
 import { red, grey } from '@mui/material/colors';
 import { lineNotify } from "../../lib/lineNotify";
-import { fetchThisWeeks, isIncludeWorkday, getReservation } from '../../lib/util'
+import { fetchThisWeeks, isIncludeWorkday, getReservation, createReservationData } from '../../lib/util'
 import { useRouter } from 'next/router'
 
 var weekJp = ["日", "月", "火", "水", "木", "金", "土"];
 
-const createReservationData = (date, staffId, profile) => {
-  return {
-    userName: profile.displayName,
-    lineId: profile.userId,
-    staff: staffId,
-    course: 1,
-    reservationAt: date,
-    clientFreeForm: '',
-    staffFreeForm: `${profile.displayName}様 ご予約ありがとうございます。お待ちしております。`,
-  }
-}
-
 export default function Staff({ serviceDomain, microcmsApiKey }) {
+  const { profile } = useContext(LiffContext);
+  const [staff, setStaff] = useState(undefined);
+  const [reservations, setReservations] = useState(undefined);
+  const [snackMessage, setSnackMessage] = useState(undefined);
+
   const client = createMicrocmsClient({
     serviceDomain: serviceDomain,
     apiKey: microcmsApiKey,
   });
-  const [staff, setStaff] = useState(undefined);
   const router = useRouter()
   useEffect(() => {
     const { id } = router.query
@@ -41,19 +33,6 @@ export default function Staff({ serviceDomain, microcmsApiKey }) {
       setReservations([])
     })
   }, [router])
-  const { profile } = useContext(LiffContext);
-  const [reservations, setReservations] = useState(undefined);
-  const [snackMessage, setSnackMessage] = useState(undefined);
-  const reserve = (date, staffId, profile) => {
-    const reservation = createReservationData(date, staffId, profile)
-    createReservation(client, reservation, staff, () => {
-      const date = new Date(reservation.reservationAt).toLocaleString()
-      const message = `${staff.staffName}さん：${reservation.userName}様の${date}から予約されました。`
-      const userMessage = `${date}の予約をしました`
-      lineNotify(message)
-      setSnackMessage(userMessage)
-    })
-  }
 
   useEffect(() => {
     getReservations(client, `staff[equals]${staff?.id}`).then((_reservations) => {
@@ -66,6 +45,16 @@ export default function Staff({ serviceDomain, microcmsApiKey }) {
   }
   const workdays = staff.workdays.map((e) => new Date(e.workday));
   const dates = fetchThisWeeks();
+  const reserve = (date, staffId, profile) => {
+    const reservation = createReservationData(date, staffId, profile)
+    createReservation(client, reservation, staff, () => {
+      const date = new Date(reservation.reservationAt).toLocaleString()
+      const message = `${staff.staffName}さん：${reservation.userName}様の${date}から予約されました。`
+      const userMessage = `${date}の予約をしました`
+      lineNotify(message)
+      setSnackMessage(userMessage)
+    })
+  }
 
   return (
     <StaffLayout staff={staff}>

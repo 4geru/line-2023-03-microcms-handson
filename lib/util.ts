@@ -38,3 +38,15 @@ export const getReservation = (reservations, workday, hour) => {
   })
   return reservation
 }
+
+export const createReservationData = (date, staffId, profile) => {
+  return {
+    userName: profile.displayName,
+    lineId: profile.userId,
+    staff: staffId,
+    course: 1,
+    reservationAt: date,
+    clientFreeForm: '',
+    staffFreeForm: `${profile.displayName}様 ご予約ありがとうございます。お待ちしております。`,
+  }
+}
