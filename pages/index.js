@@ -9,12 +9,12 @@ import { useState, useContext, useEffect } from 'react';
 import { List, ListItem, IconButton, Button, Container, Snackbar, Alert } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { lineNotify } from "../lib/lineNotify";
+import { getPreviousReservations, dateToString } from "../lib/util";
 
 export default function Home({ _staffs, serviceDomain, apiKey }) {
   const { liffObject: liff, profile, setLiffState } = useContext(LiffContext);
 
   const [staffs, setStaff] = useState(_staffs)
-  const [load, setLoad] = useState(true)
   const [reservations, setReservation] = useState([])
   const [snackMessage, setSnackMessage] = useState(undefined)
 
@@ -24,17 +24,18 @@ export default function Home({ _staffs, serviceDomain, apiKey }) {
   })
   // reference: https://document.microcms.io/content-api/get-list-contents#hf768a2fd4d
   useEffect(() => {
-    if(!load)return
     microcmsClient.get({
       endpoint: "reservations",
-      queries: { limit: 20, filters: `lineId[equals]${profile?.userId}` }
+      queries: { limit: 20, filters: `lineId[equals]${profile?.userId}`, orders: '-reservationAt' },
     }).then((data) => {
       setReservation(data.contents)
-    })  
-  }, [profile, load])
+    })
+  }, [profile])
+
+  const previousReservations = getPreviousReservations(reservations)
 
   return (
-    <Layout home user={profile}>
+    <Layout home user={profile} previousReservations={previousReservations}>
       <Head>
         <title>{siteTitle}</title>
       </Head>
@@ -115,13 +116,14 @@ export default function Home({ _staffs, serviceDomain, apiKey }) {
                   <IconButton
                     onClick={() => {
                       deleteReservation(microcmsClient, reservation, () => {
-                        const date = new Date(reservation.reservationAt).toLocaleString()
+                        const date = dateToString(reservation.reservationAt)
                         const staffName = reservation.staff.staffName;
                         const message = `${staffName}さん：${reservation.userName}様の${date}からの予約削除がされました。`
                         const userMessage = `${date}からの予約削除がされました。`
                         lineNotify(message);
                         setSnackMessage(userMessage);
-                        setLoad(true);
+                        const _reservations = reservations.filter((e) => e !== reservation)
+                        setReservation(_reservations)
                       });
                     }}
                     aria-label=""
@@ -131,7 +133,7 @@ export default function Home({ _staffs, serviceDomain, apiKey }) {
                 }
               >
                 <Link href={`/reservations?id=${reservation.id}`}>
-                  {reservation.staff?.staffName}: {(new Date(reservation.reservationAt).toLocaleString())}
+                  {reservation.staff?.staffName}: {dateToString(reservation.reservationAt)}
                 </Link>
               </ListItem>
             ))}

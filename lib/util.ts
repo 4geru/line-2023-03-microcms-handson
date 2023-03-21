@@ -39,6 +39,14 @@ export const getReservation = (reservations, workday, hour) => {
   return reservation
 }
 
+export const getPreviousReservations = (reservations) => {
+  return reservations.filter((reservation) => {
+    const a: number = new Date().getTime()
+    const b: number = new Date(reservation.reservationAt).getTime();
+    return a - b > 0;
+  })
+}
+
 export const createReservationData = (date, staffId, profile) => {
   return {
     userName: profile.displayName,
@@ -49,4 +57,8 @@ export const createReservationData = (date, staffId, profile) => {
     clientFreeForm: '',
     staffFreeForm: `${profile.displayName}様 ご予約ありがとうございます。お待ちしております。`,
   }
+}
+
+export const dateToString = (dateString) => {
+  return new Date(dateString).toLocaleString()
 }

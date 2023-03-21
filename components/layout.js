@@ -7,8 +7,9 @@ import utilStyles from '../styles/utils.module.css'
 import { Link } from '@mui/material';
 
 export const siteTitle = 'Next.js Sample Website'
+import { dateToString } from '../lib/util'
 
-export default function Layout({ children, home, user }) {
+export default function Layout({ children, home, user, previousReservations }) {
   return (
     <div className={styles.container}>
       <Head>
@@ -44,7 +45,21 @@ export default function Layout({ children, home, user }) {
               width={144}
               alt={user.displayName}
             />
-            <h1 className={utilStyles.heading2Xl}>{user.displayName}</h1>
+            <h1 className={utilStyles.headingMd}>{user.displayName}</h1>
+            <p className={utilStyles.lightText}>
+              こんにちは、{user.displayName}さん、しげサロンへようこそ！<br/>
+
+              {
+                previousReservations.length != 0 ?
+                <>
+                  来店ポイント {previousReservations.length} pt です。
+                  前回の来店は {dateToString(previousReservations[0].reservationAt)} です。
+                </> :
+                `はじめまして、お客様に合った最高のヘアスタイルをご提供できるよう、スタッフ一同心よりお待ちしております。`
+              }
+              <br/>
+              <br />
+            </p>
           </>
         )}
       </header>
