@@ -7,7 +7,7 @@ import { createReservation, getReservations } from "../../lib/useReservations";
 import { TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Button, Snackbar, Alert } from '@mui/material';
 import { red, grey } from '@mui/material/colors';
 import { lineNotify } from "../../lib/lineNotify";
-import { fetchThisWeeks, isIncludeWorkday, getReservation } from './hooks'
+import { fetchThisWeeks, isIncludeWorkday, getReservation } from '../../lib/util'
 
 export default function Staff({ staff, serviceDomain, microcmsApiKey }) {
   const client = createMicrocmsClient({
