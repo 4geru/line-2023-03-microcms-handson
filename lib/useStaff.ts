@@ -31,6 +31,6 @@ export const createStaff = (microcmsClient, successCallback, staff) => {
 
 // workshop: deleteStaff を追加しましょう
 export const deleteUser = (microcmsClient, successCallback, staff) => {
-  // TODO: 書く
+  // コードを追加しましょう！
   return staff;
 }
