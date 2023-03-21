@@ -13,21 +13,56 @@ export interface Reservation {
 export const createReservation = (microcmsClient, reservation: Reservation, staff: Staff, success = () => {}) => {
   if(!confirm("予約しますか？"))return;
   // 「予約作成」のコードを追加する
+  microcmsClient.create({
+    endpoint: 'reservations',
+    content: reservation,
+  })
+  .then(() => {
+    success()
+  })
+  .catch((err) => console.error(err));
+
   return reservation;
 }
 
 export const getReservations = async (microcmsClient, filters: string, success: () => {}) => {
   // 「予約一覧」のコードを追加する
-  return [];
+  const res = await microcmsClient.get({
+    endpoint: 'reservations',
+    queries: { filters: filters },
+  })
+  .then(success)
+  .catch((err) => console.error(err));
+
+  return res.contents;
 }
 
 export const updateReservation = (microcmsClient, reservation: Reservation, success = () => {}) => {
   // 「予約メモの更新」のコードを追加する
-  return reservation;
+  microcmsClient
+  .update({
+    endpoint: `reservations/${reservation.id}`,
+    content: reservation,
+  })
+  .then(() => {
+    success()
+  })
+  .catch((err) => console.error(err));
+
+return reservation;
 }
 
 export const deleteReservation = (microcmsClient, reservation: Reservation, success: () => {}) => {
   if(!confirm("予約を解除しますか？"))return;
   // 「予約削除」のコードを追加する
+  microcmsClient.delete({
+    endpoint: 'reservations',
+    contentId: reservation.id,
+  })
+  .then(() => {
+    success()
+  })
+  .catch((err) => console.error(err));
+
   return reservation;
 }
