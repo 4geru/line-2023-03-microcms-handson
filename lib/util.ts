@@ -2,7 +2,7 @@ export const fetchThisWeeks = () => {
   const today = new Date(); // 今日の日付を取得
   const dates = [];
   const diff = today.getDay();
-  for(var i = -diff ; i < 7-diff ; i ++) {
+  for(var i = 0 ; i < 7 ; i ++) {
     dates.push(new Date(today.getTime() + (i * 24 * 60 * 60 * 1000)))
   }
   return dates;

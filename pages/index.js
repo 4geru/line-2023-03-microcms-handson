@@ -66,7 +66,7 @@ export default function Home({ _staffs, serviceDomain, apiKey }) {
                 </IconButton>
               }
             >
-              <Link href={`/staffs/${staff.id}`}>{staff.staffName}</Link>
+              <Link href={`/staffs?id=${staff.id}`}>{staff.staffName}</Link>
             </ListItem>
           ))}
         </List>
@@ -80,7 +80,7 @@ export default function Home({ _staffs, serviceDomain, apiKey }) {
             setSnackMessage(`${staff.staffName}を追加しました`)
           }}
         >
-          スタッフの作成
+          ハンズオン用にmicroCMS上に新規スタッフ作成
         </Button>
       </Container>
 
@@ -129,7 +129,7 @@ export default function Home({ _staffs, serviceDomain, apiKey }) {
                   </IconButton>
                 }
               >
-                <Link href={`/reservations/${reservation.id}`}>
+                <Link href={`/reservations?id=${reservation.id}`}>
                   {reservation.staff?.staffName}: {(new Date(reservation.reservationAt).toLocaleString())}
                 </Link>
               </ListItem>

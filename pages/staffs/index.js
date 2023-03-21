@@ -8,45 +8,64 @@ import { TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Butto
 import { red, grey } from '@mui/material/colors';
 import { lineNotify } from "../../lib/lineNotify";
 import { fetchThisWeeks, isIncludeWorkday, getReservation } from '../../lib/util'
+import { useRouter } from 'next/router'
 
-export default function Staff({ staff, serviceDomain, microcmsApiKey }) {
+var weekJp = ["日", "月", "火", "水", "木", "金", "土"];
+
+const createReservationData = (date, staffId, profile) => {
+  return {
+    userName: profile.displayName,
+    lineId: profile.userId,
+    staff: staffId,
+    course: 1,
+    reservationAt: date,
+    clientFreeForm: '',
+    staffFreeForm: `${profile.displayName}様 ご予約ありがとうございます。お待ちしております。`,
+  }
+}
+
+export default function Staff({ serviceDomain, microcmsApiKey }) {
   const client = createMicrocmsClient({
     serviceDomain: serviceDomain,
     apiKey: microcmsApiKey,
   });
+  const [staff, setStaff] = useState(undefined);
+  const router = useRouter()
+  useEffect(() => {
+    const { id } = router.query
+    if(!id)return ;
+    client.get({
+      endpoint: `staffs/${id}`
+    }).then((content) => {
+      setStaff(content)
+      setReservations([])
+    })
+  }, [router])
   const { profile } = useContext(LiffContext);
-  const dates = fetchThisWeeks();
-  const [load, setLoad] = useState(false);
-  const [reservations, setReservations] = useState([]);
+  const [reservations, setReservations] = useState(undefined);
   const [snackMessage, setSnackMessage] = useState(undefined);
-  var weekJp = ["日", "月", "火", "水", "木", "金", "土"];
-  const reserve = (date, staffId) => {
-    const reservation = {
-      userName: profile.displayName,
-      lineId: profile.userId,
-      staff: staffId,
-      course: 1,
-      reservationAt: date,
-      clientFreeForm: '',
-      staffFreeForm: `${profile.displayName}様 ご予約ありがとうございます。お待ちしております。`,
-    }
+  const reserve = (date, staffId, profile) => {
+    const reservation = createReservationData(date, staffId, profile)
     createReservation(client, reservation, staff, () => {
       const date = new Date(reservation.reservationAt).toLocaleString()
       const message = `${staff.staffName}さん：${reservation.userName}様の${date}から予約されました。`
       const userMessage = `${date}の予約をしました`
       lineNotify(message)
       setSnackMessage(userMessage)
-      setLoad(true)
     })
   }
 
-  const workdays = staff.workdays.map((e) => new Date(e.workday));
   useEffect(() => {
-    getReservations(client, `staff[equals]${staff.id}`).then((_reservations) => {
+    getReservations(client, `staff[equals]${staff?.id}`).then((_reservations) => {
       setReservations(_reservations)
     })
-    setLoad(false)
-  }, [load])
+  }, [reservations])
+
+  if(!staff) {
+    return <></>
+  }
+  const workdays = staff.workdays.map((e) => new Date(e.workday));
+  const dates = fetchThisWeeks();
 
   return (
     <StaffLayout staff={staff}>
@@ -94,7 +113,7 @@ export default function Staff({ staff, serviceDomain, microcmsApiKey }) {
                           <TableCell key={`week-${workday.toISOString()}-${hour}`} align='center'>
                               <Button
                                 variant="text"
-                                onClick={() => { reserve(_date, staff.id) }}
+                                onClick={() => { reserve(_date, staff.id, profile) }}
                               >
                                 予約
                               </Button>
@@ -126,28 +145,9 @@ export default function Staff({ staff, serviceDomain, microcmsApiKey }) {
   )
 }
 
-export async function getStaticPaths() {
-  const client = createMicrocmsClient({
-    serviceDomain: process.env.SERVICE_DOMAIN,
-    apiKey: process.env.MICROCMS_API_KEY,
-  });
-  const data = await client.get({ endpoint: "staffs" });
-  const paths = data.contents.map((e) => ({ params: { id: e.id } }))
-  return {
-    paths: paths,
-    fallback: false
-  }
-}
-
-export async function getStaticProps({ params }) {
-  const client = createMicrocmsClient({
-    serviceDomain: process.env.SERVICE_DOMAIN,
-    apiKey: process.env.MICROCMS_API_KEY,
-  });
-  const data = await client.get({ endpoint: `staffs/${params.id}` });
+export async function getStaticProps() {
   return {
     props: {
-      staff: data,
       liffId: process.env.LIFF_ID,
       serviceDomain: process.env.SERVICE_DOMAIN,
       microcmsApiKey: process.env.MICROCMS_API_KEY

@@ -1,22 +1,39 @@
 import Layout from '../../components/layout'
 import Head from 'next/head'
 import { createMicrocmsClient } from "../../lib/microcmsClient";
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { LiffContext } from "../_app";
 import { updateReservation } from '../../lib/useReservations';
 import { lineNotify } from '../../lib/lineNotify';
 import { TextareaAutosize } from '@mui/base';
 import { Button, Snackbar, Alert } from '@mui/material';
+import { useRouter } from 'next/router'
 
-export default function Staff({ reservation, serviceDomain, microcmsApiKey }) {
+export default function Staff({ serviceDomain, microcmsApiKey }) {
   const client = createMicrocmsClient({
     serviceDomain: serviceDomain,
     apiKey: microcmsApiKey,
   });
-  const { profile } = useContext(LiffContext);
-  const [freeForm, setFreeForm] = useState(reservation.clientFreeForm)
+  const router = useRouter()
+  useEffect(() => {
+    const { id } = router.query
+    if(!id)return ;
+    client.get({
+      endpoint: `reservations/${id}`
+    }).then((content) => {
+      setFreeForm(content.clientFreeForm)
+      setReservation(content)
+    })
+  }, [router])
+  const [reservation, setReservation] = useState(undefined);
+  const [freeForm, setFreeForm] = useState(reservation?.clientFreeForm)
   const [snackMessage, setSnackMessage] = useState(undefined)
+  const { profile } = useContext(LiffContext);
   // Workshop: もし違うユーザーだったらリダイレクトする
+
+  if(!reservation) {
+    return <></>
+  }
 
   return (
     <Layout>
@@ -67,30 +84,9 @@ export default function Staff({ reservation, serviceDomain, microcmsApiKey }) {
   )
 }
 
-export async function getStaticPaths() {
-  const client = createMicrocmsClient({
-    serviceDomain: process.env.SERVICE_DOMAIN,
-    apiKey: process.env.MICROCMS_API_KEY,
-  });
-  const data = await client.get({ endpoint: "reservations" });
-  const paths = data.contents.map((e) => ({ params: { id: e.id } }))
-  return {
-    paths: paths,
-    fallback: false
-  }
-}
-
-export async function getStaticProps({ params }) {
-  const client = createMicrocmsClient({
-    serviceDomain: process.env.SERVICE_DOMAIN,
-    apiKey: process.env.MICROCMS_API_KEY,
-  });
-  const data = await client.get({
-    endpoint: `reservations/${params.id}`
-  });
+export async function getStaticProps() {
   return {
     props: {
-      reservation: data,
       liffId: process.env.LIFF_ID,
       serviceDomain: process.env.SERVICE_DOMAIN,
       microcmsApiKey: process.env.MICROCMS_API_KEY
