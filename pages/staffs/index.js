@@ -30,7 +30,9 @@ export default function Staff({ serviceDomain, microcmsApiKey }) {
       endpoint: `staffs/${id}`
     }).then((content) => {
       setStaff(content)
-      setReservations([])
+      getReservations(client, `staff[equals]${staff?.id}`).then((_reservations) => {
+        setReservations(_reservations)
+      })
     })
   }, [router])
 
@@ -38,9 +40,9 @@ export default function Staff({ serviceDomain, microcmsApiKey }) {
     getReservations(client, `staff[equals]${staff?.id}`).then((_reservations) => {
       setReservations(_reservations)
     })
-  }, [reservations])
+  }, [staff])
 
-  if(!staff) {
+  if(!staff || !reservations) {
     return <></>
   }
   const workdays = staff.workdays.map((e) => new Date(e.workday));
@@ -48,6 +50,7 @@ export default function Staff({ serviceDomain, microcmsApiKey }) {
   const reserve = (date, staffId, profile) => {
     const reservation = createReservationData(date, staffId, profile)
     createReservation(client, reservation, staff, () => {
+      setReservations([...reservations, reservation])
       const date = new Date(reservation.reservationAt).toLocaleString()
       const message = `${staff.staffName}さん：${reservation.userName}様の${date}から予約されました。`
       const userMessage = `${date}の予約をしました`
