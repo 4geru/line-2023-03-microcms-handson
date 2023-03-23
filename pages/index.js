@@ -1,4 +1,5 @@
 import Head from 'next/head'
+import Image from 'next/image'
 import Layout, { siteTitle } from '../components/layout'
 import Link from 'next/link'
 import { LiffContext } from "./_app";
@@ -9,6 +10,8 @@ import { useState, useContext, useEffect } from 'react';
 import { List, ListItem, IconButton, Button, Container, Snackbar, Alert } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { lineNotify } from "../lib/lineNotify";
+import styles from '../components/layout.module.css'
+import utilStyles from '../styles/utils.module.css'
 import { getPreviousReservations, dateToString } from "../lib/util";
 
 export default function Home({ _staffs, serviceDomain, apiKey }) {
@@ -35,10 +38,37 @@ export default function Home({ _staffs, serviceDomain, apiKey }) {
   const previousReservations = getPreviousReservations(reservations)
 
   return (
-    <Layout home user={profile} previousReservations={previousReservations}>
+    <Layout home>
       <Head>
         <title>{siteTitle}</title>
       </Head>
+      {profile && (
+        <header className={styles.header}>
+          <Image
+            priority
+            src={profile.pictureUrl}
+            className={utilStyles.borderCircle}
+            height={144}
+            width={144}
+            alt={profile.displayName}
+          />
+          <h1 className={utilStyles.headingMd}>{profile.displayName}</h1>
+          <p className={utilStyles.lightText}>
+            こんにちは、{profile.displayName}さん、しげサロンへようこそ！<br/>
+
+            {
+              previousReservations.length != 0 ?
+              <>
+                来店ポイント {previousReservations.length} pt です。
+                前回の来店は {dateToString(previousReservations[0].reservationAt)} です。
+              </> :
+              `はじめまして、お客様に合った最高のヘアスタイルをご提供できるよう、スタッフ一同心よりお待ちしております。`
+            }
+            <br/>
+            <br />
+          </p>
+        </header>
+      )}
       <Container sx={{ marginBottom: 5 }}>
         <h2>スタッフ一覧</h2>
         <List>

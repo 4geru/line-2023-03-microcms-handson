@@ -1,13 +1,10 @@
 import Head from 'next/head'
-import Image from 'next/image'
 import Script from 'next/script'
 
 import styles from './layout.module.css'
-import utilStyles from '../styles/utils.module.css'
 import { Link } from '@mui/material';
 
 export const siteTitle = 'Next.js Sample Website'
-import { dateToString } from '../lib/util'
 
 export default function Layout({ children, home, user, previousReservations }) {
   return (
@@ -34,35 +31,6 @@ export default function Layout({ children, home, user, previousReservations }) {
           console.log(`script loaded correctly, window.FB has been populated`)
         }
       />
-      <header className={styles.header}>
-        {home && user && (
-          <>
-            <Image
-              priority
-              src={user.pictureUrl}
-              className={utilStyles.borderCircle}
-              height={144}
-              width={144}
-              alt={user.displayName}
-            />
-            <h1 className={utilStyles.headingMd}>{user.displayName}</h1>
-            <p className={utilStyles.lightText}>
-              こんにちは、{user.displayName}さん、しげサロンへようこそ！<br/>
-
-              {
-                previousReservations.length != 0 ?
-                <>
-                  来店ポイント {previousReservations.length} pt です。
-                  前回の来店は {dateToString(previousReservations[0].reservationAt)} です。
-                </> :
-                `はじめまして、お客様に合った最高のヘアスタイルをご提供できるよう、スタッフ一同心よりお待ちしております。`
-              }
-              <br/>
-              <br />
-            </p>
-          </>
-        )}
-      </header>
       {!home && (
         <div className={styles.backToHome}>
           <Link href="/">← Back to home</Link>
