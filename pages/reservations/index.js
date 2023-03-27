@@ -8,6 +8,7 @@ import { lineNotify } from '../../lib/lineNotify';
 import { TextareaAutosize } from '@mui/base';
 import { Button, Snackbar, Alert } from '@mui/material';
 import { useRouter } from 'next/router'
+import { dateToString } from "../../lib/util";
 
 export default function Staff({ serviceDomain, microcmsApiKey }) {
   const { profile } = useContext(LiffContext);
@@ -41,7 +42,7 @@ export default function Staff({ serviceDomain, microcmsApiKey }) {
       <Head>
         <title>予約</title>
       </Head>
-      <h3>予約日時</h3><p>{reservation.reservationAt}</p>
+      <h3>予約日時</h3><p>{dateToString(reservation.reservationAt)}</p>
       <h3>ユーザー名</h3><p>{reservation.userName}</p>
       <h3>担当者</h3><p>{reservation.staff.staffName}</p>
       <h3>店舗自由記入欄</h3>{reservation.staffFreeForm || '記述なし'}
